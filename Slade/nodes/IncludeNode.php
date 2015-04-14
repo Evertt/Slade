@@ -1,7 +1,7 @@
-<?php namespace Slim\Nodes;
+<?php namespace Slade\Nodes;
 
-use Slim\Slim;
-use Slim\Scope;
+use Slade\Slade;
+use Slade\Scope;
 
 /**
  * @node /^\+/
@@ -11,7 +11,7 @@ class IncludeNode extends Node {
     public static function parse($node, Scope $scope, $inner) {
         $node = static::stripOperator('+', $node);
         $parts = preg_split("/\s+(?=[^\t\r\n\f \/>\"\'=]+=(\"[^\"]+\"|\S+))/", $node);
-        $file = str_replace('.', DIRECTORY_SEPARATOR, trim(array_shift($parts), "'")) . '.slim';
+        $file = str_replace('.', DIRECTORY_SEPARATOR, trim(array_shift($parts), "'")) . '.slade';
 
         $data = [];
 
@@ -19,7 +19,7 @@ class IncludeNode extends Node {
             $data += static::getAttribute($attribute, $scope);
 
         $newScope = new Scope($data, $scope);
-        return Slim::parse("templates/$file", $newScope);
+        return Slade::parse("templates/$file", $newScope);
     }
 
     protected static function matchLiteralAttribute($attr, &$m) {

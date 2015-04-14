@@ -1,4 +1,4 @@
-<?php namespace Slim;
+<?php namespace Slade;
 
 class Parser {
 
@@ -7,7 +7,7 @@ class Parser {
 
     public static function initNodes() {
         foreach (glob(__DIR__ . '/nodes/*?Node.php') as $filename) {
-            $class = 'Slim\Nodes\\' . basename($filename, '.php');
+            $class = 'Slade\Nodes\\' . basename($filename, '.php');
             $rc = new \ReflectionClass($class);
             preg_match('/@node (.+)/i', $rc->getDocComment(), $m);
             static::$nodes[$m[1]] = $class;

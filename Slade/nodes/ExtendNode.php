@@ -1,6 +1,6 @@
-<?php namespace Slim\Nodes;
+<?php namespace Slade\Nodes;
 
-use Slim\Scope;
+use Slade\Scope;
 
 /**
  * @node /^_/

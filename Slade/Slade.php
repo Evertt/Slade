@@ -1,6 +1,6 @@
-<?php namespace Slim;
+<?php namespace Slade;
 
-class Slim {
+class Slade {
 
     protected $file;
     protected $scope;

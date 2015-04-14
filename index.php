@@ -12,7 +12,7 @@ function he($str) {
     return htmlentities(html_entity_decode($str));
 }
 
-echo Slim\Slim::parse('templates/layout.slim', [
+echo Slade\Slade::parse('templates/layout.slade', [
     'title' => '<< An escaped title >>',
     'body' => '<strong>This is my unescaped body text</strong>',
     'year' => 2000,

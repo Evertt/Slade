@@ -1,7 +1,7 @@
-<?php namespace Slim\Nodes;
+<?php namespace Slade\Nodes;
 
-use Slim\Parser;
-use Slim\Scope;
+use Slade\Parser;
+use Slade\Scope;
 
 /**
  * @node /^[a-z.#]/

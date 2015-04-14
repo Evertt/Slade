@@ -1,4 +1,4 @@
-<?php namespace Slim;
+<?php namespace Slade;
 
 class Scope {
 
