@@ -21,10 +21,15 @@ html
         This should be a yield node, but I haven't implemented it yet.
         So these lines will be replaced by a simple to-do element.
 
-      p
+      p#text
         | Whitespace in the html of this text-block is preserved.
            So this line has an extra leading space.
             And this one has two...
+
+      div
+        <p id="tof">
+          This inline html was authored by {{ author }}
+        </p>
 
       article
         h2 = title
