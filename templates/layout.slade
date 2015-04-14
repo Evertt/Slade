@@ -7,6 +7,14 @@ html
     meta name="author" content=author
     link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"
 
+    css:
+      p {
+        color: #d77;
+      }
+
+    javascript:
+      console.log('hoi');
+
   body
     .container
       h1 Markup examples

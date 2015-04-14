@@ -2,8 +2,7 @@
 
 class Parser {
 
-    public static $nodes = [];
-    public static $tidy;
+    protected static $nodes = [];
 
     public static function initNodes() {
         foreach (glob(__DIR__ . '/nodes/*?Node.php') as $filename) {
@@ -21,8 +20,8 @@ class Parser {
         if (is_string($lines))
             $lines = explode(PHP_EOL, $lines);
 
-        $tree = static::getTopNodes($lines);
-        $html = static::parseTree($tree, $scope);
+        $nodes = static::getTopNodes($lines);
+        $html = static::parseNodes($nodes, $scope);
 
         return $html;
     }
@@ -37,13 +36,14 @@ class Parser {
             $depth = static::getDepth($line);
 
             if ($depth == $root)
-                $nodes[] = trim(array_shift($lines));
+                $nodes[] = [
+                    'node' => trim(array_shift($lines)),
+                    'inner' => ''
+                ];
 
             if ($depth > $root)
-                $nodes[array_pop($nodes)] =
+                $nodes[max(array_keys($nodes))]['inner'] =
                     static::getInsides($lines, $root);
-
-            if ($depth < $root) break;
         }
 
         return $nodes;
@@ -70,33 +70,18 @@ class Parser {
         return strlen($line) - strlen(ltrim($line));
     }
 
-    protected static function parseTree($tree, Scope $scope = null) {
+    protected static function parseNodes($nodes, Scope $scope = null) {
         $html = '';
 
-        foreach($tree as $key => $value)
-            $html .= static::parseNode($key, $value, $scope);
+        foreach($nodes as $node)
+            $html .= static::parseNode($node['node'], $node['inner'], $scope);
 
         return $html;
     }
 
-    protected static function parseNode($key, $value, Scope $scope = null) {
-        list($node, $innerNode)
-            = static::extract($key, $value);
-
+    protected static function parseNode($node, $inner, Scope $scope = null) {
         foreach(static::$nodes as $pattern => $class)
             if (preg_match($pattern, $node))
-                return $class::parse($node, $scope, $innerNode);
+                return $class::parse($node, $scope, $inner);
     }
-
-    protected static function extract($node, $value) {
-        $innerNode = '';
-
-        if (is_int($node))
-            $node = $value;
-        else
-            $innerNode = $value;
-
-        return [$node, $innerNode];
-    }
-
 }
