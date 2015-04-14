@@ -6,7 +6,7 @@ Clone this repository, then run `composer dump-autoload` and you should be good 
 The following nodes are included:
 
 * Any line starting with a lower case letter, a dot, or a hash, is interpreted as an html tag and will thus be handled by the `TagNode`.
-* `?` is for the `IfNode`, when you only want it's children to be displayed if the provided variable returns a truthy.
+* `?` is for the `IfNode`, when you only want its children to be displayed if the provided variable returns a truthy.
 * `!` is for the `UnlessNode`, which does pretty much the opposite of the `IfNode`.
 * `>` is for the `ForeachNode`, which iterates over the elements of an iterable.
 * `+` is for the `IncludeNode` and it includes another template into the current template.
