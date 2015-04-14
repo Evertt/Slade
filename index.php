@@ -3,9 +3,9 @@
 require_once('vendor/autoload.php');
 
 function pr($arr = []) {
-	echo '<pre>';
-	print_r($arr);
-	echo '</pre>';
+    echo '<pre>';
+    print_r($arr);
+    echo '</pre>';
 }
 
 function he($str) {

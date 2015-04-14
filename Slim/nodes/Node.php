@@ -6,8 +6,8 @@ use Slim\Scope;
 abstract class Node {
 
     protected $node;
-	protected $scope;
-	protected $inner;
+    protected $scope;
+    protected $inner;
 
     public static function parse($node, Scope $scope, $inner) {
         $class = explode('\\', static::class);
