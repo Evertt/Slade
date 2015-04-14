@@ -14,4 +14,4 @@ The following nodes are included:
 * `|` is for the `TextNode` and it will just print text, encoded with htmlentities.
 * `_` is for the `ExtendNode`. With this a view can extend a master view. **(Not yet implemented)**
 * `-` is for the `YieldNode` and it should yield a predefined section. **(Not yet implemented)**
-* `@` is for the `SectionNode`. It should assign it's children to a section. **(Not yet implemented)**
+* `@` is for the `SectionNode`. It should assign its children to a section. **(Not yet implemented)**
