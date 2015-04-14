@@ -1,5 +1,5 @@
 # Slade
-PHP templating engine inspired by Slim
+A PHP templating engine inspired by Slim
 
 Clone this repository, then run `composer dump-autoload` and you should be good to go.
 
@@ -16,3 +16,5 @@ The following nodes are included:
 * `_` is for the `ExtendNode`. With this a view can extend a master view. **(Not yet implemented)**
 * `-` is for the `YieldNode` and it should yield a predefined section. **(Not yet implemented)**
 * `@` is for the `SectionNode`. It should assign its children to a section. **(Not yet implemented)**
+
+Finally you can write `css:` and `javascript:` to insert css and javascript code.
