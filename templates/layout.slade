@@ -26,8 +26,6 @@ html
       br It knows about self-closing tags so it will ignore this line of text
 
       - 'content'
-        This should be a yield node, but I haven't implemented it yet.
-        So these lines will be replaced by a simple to-do element.
 
       p
         | Whitespace in the html of this text-block is preserved.
