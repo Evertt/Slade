@@ -9,14 +9,14 @@ abstract class Node {
     protected $scope;
     protected $inner;
 
-    public static function parse($node, Scope $scope, $inner) {
+    public static function parse($node, $inner, Scope &$scope, Scope &$sections) {
         $class = explode('\\', static::class);
         $class = end($class);
         return "<to-do $class>" . rtrim(Parser::parse($inner, $scope), PHP_EOL) . '</to-do>' . PHP_EOL;
     }
 
-    protected static function stripOperator($operator, $node) {
-        return ltrim($node, "$operator ");
+    protected static function stripOperator($node) {
+        return ltrim($node, $node[0] . ' ');
     }
 
 }

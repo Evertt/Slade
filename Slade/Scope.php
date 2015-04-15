@@ -19,6 +19,10 @@ class Scope {
         return $val ?: $default;
     }
 
+    public function set($var, $value) {
+        $this->vars[$var] = $value;
+    }
+
     protected function getVar($var) {
         $val = $this->vars;
         $path = explode('.', $var);

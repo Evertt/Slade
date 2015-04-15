@@ -6,18 +6,19 @@ class Slade {
     protected $scope;
     public $parser;
 
-    public static function parse($file, $data = []) {
+    public static function parse($file, $scope = [], $sections = []) {
         $file = static::retrieveFile($file);
 
-        if ($data instanceof Scope)
-            $scope = $data;
-        else
-            $scope = new Scope($data);
+        if (is_array($scope))
+            $scope = new Scope($scope);
 
-        return Parser::parse($file, $scope);
+        if (is_array($sections))
+            $sections = new Scope($sections);
+
+        return Parser::parse($file, $scope, $sections);
     }
 
-    protected static function retrieveFile($file) {
+    public static function retrieveFile($file) {
         $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
         return array_values(array_filter($lines, 'trim'));

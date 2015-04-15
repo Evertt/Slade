@@ -13,15 +13,18 @@ class Parser {
         }
     }
 
-    public static function parse($lines = [], Scope $scope = null) {
+    public static function parse($lines = [], Scope &$scope = null, Scope &$sections = null) {
         if (!static::$nodes)
             static::initNodes();
 
         if (is_string($lines))
             $lines = explode(PHP_EOL, $lines);
 
+        if (!$scope) $scope = new Scope();
+        if (!$sections) $sections = new Scope();
+
         $nodes = static::getTopNodes($lines);
-        $html = static::parseNodes($nodes, $scope);
+        $html = static::parseNodes($nodes, $scope, $sections);
 
         return $html;
     }
@@ -70,18 +73,20 @@ class Parser {
         return strlen($line) - strlen(ltrim($line));
     }
 
-    protected static function parseNodes($nodes, Scope $scope = null) {
+    protected static function parseNodes($nodes, Scope &$scope, Scope &$sections) {
         $html = '';
 
         foreach($nodes as $node)
-            $html .= static::parseNode($node['node'], $node['inner'], $scope);
+            $html .= static::parseNode($node['node'], $node['inner'], $scope, $sections);
 
         return $html;
     }
 
-    protected static function parseNode($node, $inner, Scope $scope = null) {
+    protected static function parseNode($node, $inner, Scope &$scope, Scope &$sections) {
+        //var_dump($node, $sections);
+
         foreach(static::$nodes as $pattern => $class)
             if (preg_match($pattern, $node))
-                return $class::parse($node, $scope, $inner);
+                return $class::parse($node, $inner, $scope, $sections);
     }
 }

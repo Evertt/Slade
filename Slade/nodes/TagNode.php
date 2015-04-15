@@ -15,7 +15,7 @@ class TagNode extends Node {
 
     protected static $defaultTagName = 'div';
 
-    public static function parse($node, Scope $scope, $inner) {
+    public static function parse($node, $inner, Scope &$scope, Scope &$sections) {
         if (substr($node,0,7) == 'doctype')
             return static::parseDoctype(substr($node,0,8));
 
@@ -36,7 +36,7 @@ class TagNode extends Node {
         $attributes = static::combineClasses($attributes);
 
         if (substr($content,0,1) == '=')
-            $content = trim(VariableNode::parse($content, $scope, null));
+            $content = trim(VariableNode::parse($content, null, $scope));
 
         $openingTag = "<$tagName$attributes>";
         $closingTag = "</$tagName>";
@@ -44,7 +44,7 @@ class TagNode extends Node {
         if (static::isSelfClosingTag($tagName))
             return $openingTag . PHP_EOL;
 
-        $infix = Parser::parse($inner, $scope);
+        $infix = Parser::parse($inner, $scope, $sections);
 
         //*
         if ($infix) {

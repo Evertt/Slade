@@ -7,8 +7,8 @@ use Slade\Scope;
  */
 class VariableNode extends Node {
 
-    public static function parse($node, Scope $scope, $inner) {
-        $varName = static::stripOperator('=', $node);
+    public static function parse($node, $inner, Scope &$scope, Scope &$sections = null) {
+        $varName = static::stripOperator($node);
         $var = $scope->get($varName);
 
         if (substr($node, 0, 2) == '==')

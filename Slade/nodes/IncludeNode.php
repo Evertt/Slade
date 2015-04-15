@@ -8,8 +8,8 @@ use Slade\Scope;
  */
 class IncludeNode extends Node {
 
-    public static function parse($node, Scope $scope, $inner) {
-        $node = static::stripOperator('+', $node);
+    public static function parse($node, $inner, Scope &$scope, Scope &$sections) {
+        $node = static::stripOperator($node);
         $parts = preg_split("/\s+(?=[^\t\r\n\f \/>\"\'=]+=(\"[^\"]+\"|\S+))/", $node);
         $file = str_replace('.', DIRECTORY_SEPARATOR, trim(array_shift($parts), "'")) . '.slade';
 

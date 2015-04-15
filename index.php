@@ -12,7 +12,7 @@ function he($str) {
     return htmlentities(html_entity_decode($str));
 }
 
-echo Slade\Slade::parse('templates/layout.slade', [
+echo Slade\Slade::parse('templates/index.slade', [
     'title' => '<< An escaped title >>',
     'body' => '<strong>This is my unescaped body text</strong>',
     'year' => 2000,

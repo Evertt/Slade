@@ -7,7 +7,7 @@ use Slade\Scope;
  */
 class TextNode extends Node {
 
-    public static function parse($node, Scope $scope, $inner) {
+    public static function parse($node, $inner, Scope &$scope, Scope &$sections) {
         $node = static::format($node . PHP_EOL . $inner);
 
         static::replaceVars($node, $scope);
