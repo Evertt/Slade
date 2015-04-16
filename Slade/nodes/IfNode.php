@@ -1,4 +1,6 @@
-<?php namespace Slade\Nodes;
+<?php
+
+namespace Slade\nodes;
 
 use Slade\Parser;
 use Slade\Scope;
@@ -6,13 +8,14 @@ use Slade\Scope;
 /**
  * @node /^\?/
  */
-class IfNode extends Node {
-
-    public static function parse($node, $inner, Scope &$scope, Scope &$sections) {
+class IfNode extends Node
+{
+    public static function parse($node, $inner, Scope & $scope, Scope & $sections)
+    {
         $var = static::stripOperator($node);
 
-        if ($scope->get($var))
+        if ($scope->get($var)) {
             return Parser::parse($inner, $scope, $sections);
+        }
     }
-    
 }

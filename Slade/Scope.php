@@ -1,51 +1,64 @@
-<?php namespace Slade;
+<?php
 
-class Scope {
+namespace Slade;
 
+class Scope
+{
     protected $vars;
     protected $parent;
 
-    public function __construct($vars = [], Scope $parent = null) {
+    public function __construct($vars = [], Scope $parent = null)
+    {
         $this->vars = $vars;
         $this->parent = $parent;
     }
 
-    public function get($var, $default = null) {
-        $val = $this->getVar($var);
+    public function get($var, $default = null)
+    {
+        $val = $this->_get($var);
 
-        if (!$val && $this->parent)
+        if (!$val && $this->parent) {
             $val = $this->parent->get($var);
+        }
 
         return $val ?: $default;
     }
 
-    public function set($var, $value) {
+    public function set($var, $value)
+    {
         $this->vars[$var] = $value;
     }
 
-    protected function getVar($var) {
+    protected function _get($var)
+    {
         $val = $this->vars;
         $path = explode('.', $var);
 
-        foreach($path as $step)
-            if (!($val = $this->put($val, $step)))
-                return null;
+        foreach ($path as $step) {
+            if (!($val = $this->check($val, $step))) {
+                return;
+            }
+        }
 
         return $val;
     }
 
-    protected function put($var, $key) {
+    protected function check($var, $key)
+    {
         $val = null;
 
-        if (is_object($var))
-            if (isset($var->$key))
-                    $val = $var->$key;
+        if (is_object($var)) {
+            if (isset($var->$key)) {
+                $val = $var->$key;
+            }
+        }
 
-        if (is_array($var))
-            if (isset($var[$key]))
+        if (is_array($var)) {
+            if (isset($var[$key])) {
                 $val = $var[$key];
+            }
+        }
 
         return $val;
     }
-
 }

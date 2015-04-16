@@ -25,7 +25,7 @@ html
       my-app As you can see, custom elements are also printed
       br It knows about self-closing tags so it will ignore this line of text
 
-      - 'content'
+      - content
 
       p
         | Whitespace in the html of this text-block is preserved.
@@ -64,5 +64,5 @@ html
           | Thank you!
 
       #footer
-        + 'elements.footer' persons=items foo="bar"
+        + elements.footer persons=items foo="bar"
         | Copyright © {{ year }} {{ author }}
