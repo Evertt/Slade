@@ -16,7 +16,7 @@ class IncludeNode extends Node
 
         $node = static::strip($node);
 
-        $file = static::getFilePath(strtok($node, " \r\n"));
+        $file = strtok($node, " \r\n");
 
         $data = static::getAttributes($node, $scope)['array'];
 

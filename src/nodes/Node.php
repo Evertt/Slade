@@ -6,7 +6,6 @@ use Slade\Scope;
 
 abstract class Node
 {
-
     protected static function strip($node)
     {
         return trim($node, $node[0]." \r\n");
@@ -73,12 +72,5 @@ abstract class Node
         $string = trim(preg_replace_callback($pattern, $callback, $string));
 
         return compact('string','array');
-    }
-
-    protected static function getFilePath($node)
-    {
-        $path = str_replace('.', '/', $node);
-
-        return 'templates/'.$path.'.slade';
     }
 }

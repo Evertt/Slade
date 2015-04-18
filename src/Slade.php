@@ -4,13 +4,11 @@ namespace Slade;
 
 class Slade
 {
-    protected $file;
-    protected $scope;
-    public $parser;
+    public static $paths = [];
 
-    public static function parse($file, $scope = [], $sections = [])
+    public static function parse($fileName, $scope = [], $sections = [])
     {
-        $file = static::retrieveFile($file);
+        $file = static::retrieveFile($fileName);
 
         if (is_array($scope)) {
             $scope = new Scope($scope);
@@ -23,12 +21,17 @@ class Slade
         return Parser::parse($file, $scope, $sections);
     }
 
-    public static function retrieveFile($file)
+    public static function retrieveFile($fileName)
     {
-        $lines = file($file);//, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $fileName = str_replace('.', '/', $fileName);
+        $fileName .= '.slade';
 
-        return $lines;
-
-        return array_filter($lines, 'trim');
+        foreach(static::$paths as $path)
+        {
+            if ($file = file("$path/$fileName"))
+            {
+                return $file;
+            }
+        }
     }
 }
