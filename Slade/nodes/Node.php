@@ -6,21 +6,15 @@ use Slade\Scope;
 
 abstract class Node
 {
-    protected static $attribute = '([^\t\r\n\f \/>"\'=]+)';
-    protected static $literal   = '"([^"]+)"';
-    protected static $boolean   = '(true|false)';
-    protected static $variable  = '(.+)';
+
+    protected static function strip($node)
+    {
+        return trim($node, $node[0]." \r\n");
+    }
 
     protected static function stripOperator($node)
     {
         return ltrim($node, $node[0].' ');
-    }
-
-    protected static function matchAttribute($attr, $value, &$m)
-    {
-        $attribute = static::$attribute;
-
-        return !!preg_match("/^$attribute=$value$/", $attr, $m);
     }
 
     protected static function replaceVars(&$node, Scope $scope)
@@ -28,13 +22,63 @@ abstract class Node
         preg_match_all('/{{\s*(\w+)\s*}}/', $node, $escapedVars);
 
         foreach ($escapedVars[1] as $i => $var) {
-            $node = str_replace($escapedVars[0][$i], he($scope->get($var)), $node);
+            $node = str_replace($escapedVars[0][$i], e($scope[$var]), $node);
         }
 
         preg_match_all('/{!\s*(\w+)\s*!}/', $node, $unescapedVars);
 
         foreach ($unescapedVars[1] as $i => $var) {
-            $node = str_replace($unescapedVars[0][$i], $scope->get($var), $node);
+            $node = str_replace($unescapedVars[0][$i], $scope[$var], $node);
         }
+    }
+
+    protected static function getAttributes($string, Scope &$scope) {
+        $array = [];
+        $pattern = '/([^\s\/>"\'=]+)=("[^"]+"|\S+)/';
+
+        $callback = function ($attr) use (&$array, &$scope) {
+            if ($attr[2] === 'true') {
+                $array[$attr[1]] = true;
+                return $attr[1];
+            }
+
+            if ($attr[2] === 'false') {
+                $array[$attr[1]] = false;
+                return '';
+            }
+
+            if ($attr[2][0] == '"') {
+                $array[$attr[1]] = trim($attr[2], '"');
+                return $attr[0];
+            }
+
+            $array[$attr[1]] = $scope[$attr[2]];
+            $value = $array[$attr[1]] ?: false;
+
+            if ($value === true) {
+                return $attr[1];
+            }
+
+            if ($value === false) {
+                return '';
+            }
+
+            if (is_array($value)) {
+                $value = json_encode($value);
+            }
+
+            return $attr[1] . '="' . e($value) . '"';
+        };
+
+        $string = trim(preg_replace_callback($pattern, $callback, $string));
+
+        return compact('string','array');
+    }
+
+    protected static function getFilePath($node)
+    {
+        $path = str_replace('.', '/', $node);
+
+        return 'templates/'.$path.'.slade';
     }
 }

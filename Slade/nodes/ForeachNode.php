@@ -10,13 +10,17 @@ use Slade\Scope;
  */
 class ForeachNode extends Node
 {
-    public static function parse($node, $inner, Scope & $scope, Scope & $sections)
+    public static function parse($node, $inner, $depth, Scope & $scope, Scope & $sections)
     {
-        $var = static::stripOperator($node);
-        $itemName = rtrim($var, 's');
+        $var = static::strip($node);
+
+        $varName = substr($var, (strrpos($var, '.') ?: -1) + 1);
+
+        $itemName = str_singular($varName);
+
         $html = '';
 
-        foreach ($scope->get($var, []) as $item) {
+        foreach ($scope[$var] ?: [] as $item) {
             $html .= Parser::parse(
                 $inner,
                 new Scope([$itemName => $item], $scope),

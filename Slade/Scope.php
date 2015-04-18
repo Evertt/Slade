@@ -2,7 +2,7 @@
 
 namespace Slade;
 
-class Scope
+class Scope implements \ArrayAccess
 {
     protected $vars;
     protected $parent;
@@ -60,5 +60,25 @@ class Scope
         }
 
         return $val;
+    }
+
+    public function offsetSet($offset, $val) {
+        if (is_null($offset)) {
+            $this->vars[] = $val;
+        } else {
+            $this->vars[$offset] = $val;
+        }
+    }
+
+    public function offsetExists($offset) {
+        return !!$this->get($offset);
+    }
+
+    public function offsetUnset($offset) {
+        unset($this->vars[$offset]);
+    }
+
+    public function offsetGet($offset) {
+        return $this->get($offset);
     }
 }

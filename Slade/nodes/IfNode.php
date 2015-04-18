@@ -10,11 +10,11 @@ use Slade\Scope;
  */
 class IfNode extends Node
 {
-    public static function parse($node, $inner, Scope & $scope, Scope & $sections)
+    public static function parse($node, $inner, $depth, Scope & $scope, Scope & $sections)
     {
-        $var = static::stripOperator($node);
+        $var = static::strip($node);
 
-        if ($scope->get($var)) {
+        if ($scope[$var]) {
             return Parser::parse($inner, $scope, $sections);
         }
     }

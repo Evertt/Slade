@@ -9,15 +9,16 @@ use Slade\Scope;
  */
 class VariableNode extends Node
 {
-    public static function parse($node, $inner, Scope & $scope, Scope & $sections = null)
+    public static function parse($node, $inner, $depth, Scope & $scope, Scope & $sections = null)
     {
-        $varName = static::stripOperator($node);
-        $var = $scope->get($varName);
+        $newLines = countNewLines($node);
+        $varName = static::strip($node);
+        $var = $scope[$varName];
 
-        if (substr($node, 0, 2) == '==') {
-            return $var.PHP_EOL;
+        if (starts_with($node, '==')) {
+            return $var . repeat(PHP_EOL, $newLines);
         }
 
-        return he($var).PHP_EOL;
+        return e($var) . repeat(PHP_EOL, $newLines);
     }
 }

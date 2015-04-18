@@ -10,37 +10,20 @@ use Slade\Scope;
  */
 class IncludeNode extends Node
 {
-    public static function parse($node, $inner, Scope & $scope, Scope & $sections)
+    public static function parse($node, $inner, $depth, Scope & $scope, Scope & $sections)
     {
-        $node = static::stripOperator($node);
-        $parts = preg_split("/\s+(?=[^\t\r\n\f \/>\"\'=]+=(\"[^\"]+\"|\S+))/", $node);
-        $file = str_replace('.', DIRECTORY_SEPARATOR, trim(array_shift($parts), "'")).'.slade';
+        $newLines = countNewLines($node.$inner);
 
-        $data = [];
+        $node = static::strip($node);
 
-        foreach ($parts as $attribute) {
-            $data += static::getAttribute($attribute, $scope);
-        }
+        $file = static::getFilePath(strtok($node, " \r\n"));
+
+        $data = static::getAttributes($node, $scope)['array'];
 
         $newScope = new Scope($data, $scope);
 
-        return Slade::parse("templates/$file", $newScope);
-    }
+        $parsed = Slade::parse($file, $newScope);
 
-    protected static function getAttribute($attr, Scope $scope)
-    {
-        $m = [];
-
-        if (static::matchAttribute($attr, static::$literal, $m)) {
-            return [$m[1] => $m[2]];
-        }
-
-        if (static::matchAttribute($attr, static::$boolean, $m)) {
-            return [$m[1] => $m[2] === 'true' ? true : false];
-        }
-
-        if (static::matchAttribute($attr, static::$variable, $m)) {
-            return [$m[1] => $scope->get($m[2])];
-        }
+        return trim($parsed) . str_repeat(PHP_EOL, $newLines);
     }
 }

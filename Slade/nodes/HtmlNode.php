@@ -9,9 +9,9 @@ use Slade\Scope;
  */
 class HtmlNode extends Node
 {
-    public static function parse($node, $inner, Scope & $scope, Scope & $sections)
+    public static function parse($node, $inner, $depth, Scope & $scope, Scope & $sections)
     {
-        $node .= PHP_EOL.$inner.PHP_EOL;
+        $node .= indent($inner, $depth);
 
         static::replaceVars($node, $scope);
 

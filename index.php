@@ -1,5 +1,6 @@
 <?php
 
+require_once('Slade/helpers.php');
 require_once('vendor/autoload.php');
 
 function pr($arr = []) {
@@ -8,10 +9,20 @@ function pr($arr = []) {
     echo '</pre>';
 }
 
-function he($str) {
-    return htmlentities(html_entity_decode($str));
-}
+$slade = 
+'a
+  b
+    c
 
+d
+  e
+    f
+
+    g';
+$slade = preg_split('/(?<=\n)/', $slade);
+//var_dump($slade, Slade\Parser::getTopNodes($slade));
+
+//*
 echo Slade\Slade::parse('templates/index.slade', [
     'title' => '<< An escaped title >>',
     'body' => '<strong>This is my unescaped body text</strong>',
@@ -24,3 +35,4 @@ echo Slade\Slade::parse('templates/index.slade', [
     ],
     'post' => ['body' => '<em>very important</em>']
 ]);
+/**/

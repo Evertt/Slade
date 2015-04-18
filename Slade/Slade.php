@@ -25,8 +25,10 @@ class Slade
 
     public static function retrieveFile($file)
     {
-        $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $lines = file($file);//, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
-        return array_values(array_filter($lines, 'trim'));
+        return $lines;
+
+        return array_filter($lines, 'trim');
     }
 }

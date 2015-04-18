@@ -9,18 +9,22 @@ use Slade\Scope;
  */
 class CodeNode extends Node
 {
-    public static function parse($node, $inner, Scope & $scope, Scope & $sections)
+    public static function parse($node, $inner, $depth, Scope & $scope, Scope & $sections)
     {
-        if ($node == 'javascript:') {
-            return '<script>'.PHP_EOL.
-                        $inner.PHP_EOL.
-                    '</script>'.PHP_EOL;
+        $newLines = countNewLines($node.$inner);
+
+        $inner = surround($inner, PHP_EOL);
+
+        $inner = indent($inner, $depth);
+
+        if (starts_with($node, 'javascript'))
+        {
+            return "<script>$inner</script>" . repeat(PHP_EOL, $newLines);
         }
 
-        if ($node == 'css:') {
-            return '<style>'.PHP_EOL.
-                        $inner.PHP_EOL.
-                    '</style>'.PHP_EOL;
+        if (starts_with($node, 'css'))
+        {
+            return "<style>$inner</style>" . repeat(PHP_EOL, $newLines);
         }
     }
 }

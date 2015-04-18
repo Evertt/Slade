@@ -10,10 +10,10 @@ use Slade\Parser;
  */
 class SectionNode extends Node
 {
-    public static function parse($node, $inner, Scope & $scope, Scope & $sections)
+    public static function parse($node, $inner, $depth, Scope & $scope, Scope & $sections)
     {
-        $section = static::stripOperator($node);
+        $section = static::strip($node);
 
-        $sections->set($section, Parser::parse($inner, $scope, $sections));
+        $sections[$section] = Parser::parse($inner, $scope, $sections);
     }
 }

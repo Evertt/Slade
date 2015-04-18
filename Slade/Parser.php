@@ -10,8 +10,11 @@ class Parser
     {
         foreach (glob(__DIR__.'/nodes/*?Node.php') as $filename) {
             $class = 'Slade\Nodes\\'.basename($filename, '.php');
+
             $rc = new \ReflectionClass($class);
+
             preg_match('/@node (.+)/i', $rc->getDocComment(), $m);
+
             static::$nodes[$m[1]] = $class;
         }
     }
@@ -23,56 +26,68 @@ class Parser
         }
 
         if (is_string($lines)) {
-            $lines = explode(PHP_EOL, $lines);
+            $lines = preg_split('/$\R*^\K/m', $lines);
         }
 
         if (!$scope) {
             $scope = new Scope();
         }
+
         if (!$sections) {
             $sections = new Scope();
         }
 
         $nodes = static::getTopNodes($lines);
+
         $html = static::parseNodes($nodes, $scope, $sections);
 
         return $html;
     }
 
-    protected static function getTopNodes(&$lines)
+    public static function getTopNodes($lines = [])
     {
-        if (empty($lines)) {
-            return;
-        }
-
         $nodes = [];
-        $root = static::getDepth(reset($lines));
 
         while ($line = reset($lines)) {
             $depth = static::getDepth($line);
 
-            if ($depth == $root) {
+            if ($depth === 0) {
                 $nodes[] = [
-                    'node' => trim(array_shift($lines)),
+                    'node' => ltrim(array_shift($lines), ' '),
                     'inner' => '',
+                    'depth' => 0
                 ];
             }
 
-            if ($depth > $root) {
-                $nodes[max(array_keys($nodes))]['inner'] =
-                    static::getInsides($lines, $root);
+            elseif ($depth > 0) {
+                static::appendLinesToLastNode($nodes, $lines);
             }
         }
 
         return $nodes;
     }
 
-    protected static function getInsides(&$lines, $d = 0)
-    {
-        if (empty($lines)) {
-            return;
+    protected static function isEmpty($line) {
+        return !trim($line, "\r\n");
+    }
+
+    protected static function appendLinesToLastNode(&$nodes, &$lines) {
+        $inner = '';
+
+        while ($node = &$nodes[max(array_keys($nodes))])
+        {
+            if (!static::isEmpty($node['node'])) break;
+
+            $inner .= array_pop($nodes)['node'];
         }
 
+        $appendix = static::getInsides($lines, $node['depth']);
+        $node['inner'] .= $inner . $appendix['inner'];
+        $node['depth'] = $appendix['depth'];
+    }
+
+    protected static function getInsides(&$lines, $d = 0)
+    {
         $insides = '';
         $root = static::getDepth(reset($lines));
 
@@ -83,34 +98,39 @@ class Parser
                 break;
             }
 
-            $insides .= substr(array_shift($lines), $d).PHP_EOL;
+            $insides .= substr(array_shift($lines), $d ?: $root);
         }
 
-        return rtrim($insides, PHP_EOL);
+        return ['inner' => $insides, 'depth' => $d ?: $root];
     }
 
     public static function getDepth($line)
     {
-        return strlen($line) - strlen(ltrim($line));
+        return strlen($line) - strlen(ltrim($line, ' '));
     }
 
     protected static function parseNodes($nodes, Scope & $scope, Scope & $sections)
     {
         $html = '';
 
-        foreach ($nodes as $node) {
-            $html .= static::parseNode($node['node'], $node['inner'], $scope, $sections);
+        foreach ($nodes as $node)
+        {
+            $html .= static::parseNode($node['node'], $node['inner'], $node['depth'], $scope, $sections);
         }
 
         return $html;
     }
 
-    protected static function parseNode($node, $inner, Scope & $scope, Scope & $sections)
+    protected static function parseNode($node, $inner, $depth, Scope & $scope, Scope & $sections)
     {
-        foreach (static::$nodes as $pattern => $class) {
-            if (preg_match($pattern, $node)) {
-                return $class::parse($node, $inner, $scope, $sections);
+        foreach (static::$nodes as $pattern => $class)
+        {
+            if (preg_match($pattern, $node))
+            {
+                return $class::parse($node, $inner, $depth, $scope, $sections);
             }
         }
+
+        return $node . $inner;
     }
 }

@@ -17,59 +17,74 @@ class TagNode extends Node
 
     protected static $defaultTagName = 'div';
 
-    public static function parse($node, $inner, Scope & $scope, Scope & $sections)
+    public static function parse($node, $inner, $depth, Scope & $scope, Scope & $sections)
     {
         if (substr($node, 0, 7) == 'doctype') {
-            return static::parseDoctype(substr($node, 0, 8));
+            return static::parseDoctype(substr($node, 0, 8)).PHP_EOL;
         }
 
-        $depth = Parser::getDepth(strtok($inner, PHP_EOL));
+        $newLines = 0;
+        $tag = $rest = $tagName = $id = $class = $attributes = $content = '';
 
-        $attributes = '';
-        $parts = preg_split('/\s+(?=[^\t\r\n\f \/>"\'=]+=("[^"]+"|\S+))|(^[\w-#.]+|[^\t\r\n\f \/>"\'=]+=("[^"]+"|\S+))\K\s+/', $node);
-        list($tagName, $id, $class) = static::split(array_shift($parts));
+        $attributePattern = '/([^\s\/>"\'=]+)=("[^"]+"|\S+)/';
 
-        $attributes .= $id ? " id=\"$id\"" : '';
-        $attributes .= $class ? " class=\"$class\"" : '';
+        list($tag, $rest) = preg_split('/^\S+\K\s+|$/', $node);
+        list($tagName, $id, $class) = static::split($tag);
+        list($attributes, $content) = static::splitAttrContent($rest);
+        $attributes = "$id $class $attributes";
 
-        while (static::isAttribute(reset($parts))) {
-            $attributes .= ' '.static::getAttribute($parts, $scope);
-        }
+        $replaceAttributes = function ($attr) use (&$scope) {
+            if ($attr[2] === 'true') {
+                return $attr[1];
+            }
 
-        $content = end($parts);
+            if ($attr[2] === 'false') {
+                return '';
+            }
 
-        $attributes = static::combineClasses($attributes);
+            if ($attr[2][0] == '"') {
+                return $attr[0];
+            }
 
-        if (substr($content, 0, 1) == '=') {
-            $content = trim(VariableNode::parse($content, null, $scope));
-        }
+            $value = $scope->get($attr[2], false);
 
-        $openingTag = "<$tagName$attributes>";
-        $closingTag = "</$tagName>";
+            if ($value === true) {
+                return $attr[1];
+            }
 
-        if (static::isSelfClosingTag($tagName)) {
-            return $openingTag.PHP_EOL;
-        }
+            if ($value === false) {
+                return '';
+            }
+
+            return $attr[1] . '="' . e($value) . '"';
+        };
+
+        $attributes = static::getAttributes($attributes, $scope)['string'];
+        $attributes = $attributes ? " $attributes" : '';
 
         $infix = Parser::parse($inner, $scope, $sections);
 
-        //*
         if ($infix) {
-            $infix = static::addIndentation($infix, $depth);
-
-            if ($content) {
-                $content = str_pad('', $depth).$content;
-            }
+            $infix = indent($infix, 2);
+            $newLines = max(1, countNewLines($inner));
+            $infix = finish(rtrim($infix), PHP_EOL);
+            $content = finish($content, str_repeat(PHP_EOL,countNewLines($node)));
+        } else {
+            $newLines = max(1, countNewLines($content) + 1);
+            $content = rtrim($content);
         }
 
-        return str_replace(PHP_EOL.PHP_EOL.PHP_EOL, PHP_EOL.PHP_EOL,
-            ($infix ? PHP_EOL.$openingTag.PHP_EOL : $openingTag).
-            ($infix && $content ? $content.PHP_EOL : $content).
-            ($infix ? trim($infix, PHP_EOL).PHP_EOL : '').
-            $closingTag.($infix ? PHP_EOL : '').PHP_EOL);
-        /**/
+        $attributes = static::combineClasses($attributes);
 
-        return $openingTag.$content.$infix.$closingTag;
+        if (static::isSelfClosingTag($tagName)) {
+            return "<$tagName$attributes>" . str_repeat(PHP_EOL, $newLines);
+        }
+
+        if (substr($content, 0, 1) == '=') {
+            $content = trim(VariableNode::parse($content, null, $depth, $scope));
+        }
+
+        return "<$tagName$attributes>$content$infix</$tagName>" . str_repeat(PHP_EOL, $newLines);
     }
 
     protected static function split($tag)
@@ -84,32 +99,20 @@ class TagNode extends Node
 
         $class = str_replace('.', ' ', $class);
 
+        $id = $id ? "id=\"$id\"" : '';
+        $class = $class ? "class=\"$class\"" : '';
+
         return [$tagName, $id, $class];
     }
 
-    protected static function isAttribute($attr)
-    {
-        $attribute = static::$attribute;
-
-        return !!preg_match("/^$attribute=.+/", $attr);
-    }
-
-    protected static function getAttribute(&$parts, Scope $scope)
-    {
-        $attr = array_shift($parts);
-        $m = [];
-
-        if (static::matchAttribute($attr, static::$literal, $m)) {
-            return $m[1].'="'.he($m[2]).'"';
+    protected static function splitAttrContent($str) {
+        if (preg_match('/(([^\s\/>"\'=]+)=("[^"]+"|\S+)\s*)+/', $str, $attr)) {
+            $attributes = trim($attr[0]);
+            $content = str_replace($attr[0], '', $str);
+            return [$attributes, $content];
         }
 
-        if (static::matchAttribute($attr, static::$boolean, $m)) {
-            return $m[2] === 'true' ? $m[1] : '';
-        }
-
-        if (static::matchAttribute($attr, static::$variable, $m)) {
-            return $m[1].'="'.he($scope->get($m[2])).'"';
-        }
+        return ['', $str];
     }
 
     protected static function combineClasses($attributes)
@@ -188,16 +191,4 @@ class TagNode extends Node
         return $attributes ? " $attributes" : '';
     }
 
-    protected static function addIndentation($string, $depth)
-    {
-        $lines = explode(PHP_EOL, $string);
-
-        foreach ($lines as &$line) {
-            if ($line) {
-                $line = str_pad('', $depth).$line;
-            }
-        }
-
-        return implode(PHP_EOL, $lines);
-    }
 }

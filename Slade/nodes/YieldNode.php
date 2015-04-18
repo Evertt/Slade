@@ -3,16 +3,26 @@
 namespace Slade\nodes;
 
 use Slade\Scope;
+use Slade\Parser;
 
 /**
  * @node /^-/
  */
 class YieldNode extends Node
 {
-    public static function parse($node, $inner, Scope & $scope, Scope & $sections)
+    public static function parse($node, $inner, $depth, Scope & $scope, Scope & $sections)
     {
-        $section = static::stripOperator($node);
+        $newLines = countNewLines($node.$inner);
 
-        return $sections->get($section);
+        $section = static::strip($node);
+
+        $html = $sections[$section];
+
+        if ($html)
+        {
+            return $html . repeat(PHP_EOL, $newLines);
+        } else {
+            return Parser::parse($inner, $scope, $sections);
+        }
     }
 }
