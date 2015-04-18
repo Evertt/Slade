@@ -1,5 +1,5 @@
 {
-    "name": "Evertt/Slade",
+    "name": "evertt/slade",
     "description": "A templating for Laravel inspired by Ruby Slim",
     "keywords": ["slade", "templating engine", "laravel", "slim", "blade", "templating"],
     "license": "MIT",
