@@ -1,6 +1,5 @@
 <?php
 
-require_once('Slade/helpers.php');
 require_once('vendor/autoload.php');
 
 function pr($arr = []) {

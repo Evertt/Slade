@@ -21,7 +21,9 @@ class YieldNode extends Node
         if ($html)
         {
             return $html . repeat(PHP_EOL, $newLines);
-        } else {
+        }
+        else
+        {
             return Parser::parse($inner, $scope, $sections);
         }
     }

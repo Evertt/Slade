@@ -1,6 +1,27 @@
 {
+    "name": "Evertt/Slade",
+    "description": "A templating for Laravel inspired by Ruby Slim",
+    "keywords": ["slade", "templating engine", "laravel", "slim", "blade", "templating"],
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/Evertt/Slade/issues",
+        "source": "https://github.com/Evertt/Slade"
+    },
+    "authors": [
+        {
+            "name": "Evert van Brussel",
+            "email": "ecvanbrussel@gmail.com"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "Slade\\": "src/"
+        }
+    },
     "require": {
         "laravel/framework": "5.0.*"
-    },
-    "autoload": {"psr-0": {"": ""}}
+    }
 }
