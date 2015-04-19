@@ -6,16 +6,15 @@ html
     meta name="keywords" content="template language"
     meta name="author" content=author
     link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"
-    
+
     css:
       p {
         color: #d77;
       }
-      
+
     javascript:
       console.log('hoi');
-      console.log('doei');
-  
+
   body
     / This line of comment is completely ignored.
     /! While this one is converted to an html comment block...

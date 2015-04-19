@@ -2,27 +2,14 @@
 
 require_once('vendor/autoload.php');
 
-function pr($arr = []) {
+function pr($var) {
     echo '<pre>';
-    print_r($arr);
+    print_r($var);
     echo '</pre>';
 }
 
-$slade = 
-'a
-  b
-    c
-
-d
-  e
-    f
-
-    g';
-$slade = preg_split('/(?<=\n)/', $slade);
-//var_dump($slade, Slade\Parser::getTopNodes($slade));
-
-//*
-echo Slade\Slade::parse('templates/index.slade', [
+Slade\Slade::$paths = [__DIR__ . '/templates'];
+echo Slade\Slade::parse('index', [
     'title' => '<< An escaped title >>',
     'body' => '<strong>This is my unescaped body text</strong>',
     'year' => 2000,

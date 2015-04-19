@@ -9,7 +9,7 @@ use Slade\Scope;
  */
 class VariableNode extends Node
 {
-    public static function parse($node, $inner, $depth, Scope & $scope, Scope & $sections = null)
+    public static function parse($node, $inner, $depth, Scope $scope)
     {
         $newLines = countNewLines($node);
         $varName = static::strip($node);

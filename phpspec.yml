@@ -1,0 +1,4 @@
+suites:
+    slade_suite:
+        namespace: Slade
+        psr4_prefix: Slade

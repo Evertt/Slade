@@ -10,7 +10,7 @@ use Slade\Parser;
  */
 class YieldNode extends Node
 {
-    public static function parse($node, $inner, $depth, Scope & $scope, Scope & $sections)
+    public static function parse($node, $inner, $depth, Scope $scope, Scope $sections)
     {
         $newLines = countNewLines($node.$inner);
 

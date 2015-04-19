@@ -1,13 +1,11 @@
 <?php namespace Slade\Nodes;
 
-use Slade\Scope;
-
 /**
  * @node /^\//
  */
 class CommentNode extends Node
 {
-    public static function parse($node, $inner, $depth, Scope & $scope, Scope & $sections)
+    public static function parse($node, $inner, $depth)
     {
         $newLines = countNewLines($node.$inner);
 

@@ -17,47 +17,18 @@ class TagNode extends Node
 
     protected static $defaultTagName = 'div';
 
-    public static function parse($node, $inner, $depth, Scope & $scope, Scope & $sections)
+    public static function parse($node, $inner, $depth, Scope $scope, Scope $sections)
     {
+        $newLines = countNewLines($node.$inner);
+
         if (substr($node, 0, 7) == 'doctype') {
-            return static::parseDoctype(substr($node, 0, 8)).PHP_EOL;
+            return static::parseDoctype(substr($node, 0, 8)) . str_repeat(PHP_EOL, $newLines);
         }
-
-        $newLines = 0;
-        $tag = $rest = $tagName = $id = $class = $attributes = $content = '';
-
-        $attributePattern = '/([^\s\/>"\'=]+)=("[^"]+"|\S+)/';
 
         list($tag, $rest) = preg_split('/^\S+\K\s+|$/', $node);
         list($tagName, $id, $class) = static::split($tag);
         list($attributes, $content) = static::splitAttrContent($rest);
         $attributes = "$id $class $attributes";
-
-        $replaceAttributes = function ($attr) use (&$scope) {
-            if ($attr[2] === 'true') {
-                return $attr[1];
-            }
-
-            if ($attr[2] === 'false') {
-                return '';
-            }
-
-            if ($attr[2][0] == '"') {
-                return $attr[0];
-            }
-
-            $value = $scope->get($attr[2], false);
-
-            if ($value === true) {
-                return $attr[1];
-            }
-
-            if ($value === false) {
-                return '';
-            }
-
-            return $attr[1] . '="' . e($value) . '"';
-        };
 
         $attributes = static::getAttributes($attributes, $scope)['string'];
         $attributes = $attributes ? " $attributes" : '';
@@ -66,11 +37,9 @@ class TagNode extends Node
 
         if ($infix) {
             $infix = indent($infix, 2);
-            $newLines = max(1, countNewLines($inner));
             $infix = finish(rtrim($infix), PHP_EOL);
-            $content = finish($content, str_repeat(PHP_EOL,countNewLines($node)));
+            $content = finish($content, str_repeat(PHP_EOL, countNewLines($node)));
         } else {
-            $newLines = max(1, countNewLines($content) + 1);
             $content = rtrim($content);
         }
 

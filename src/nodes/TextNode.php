@@ -9,7 +9,7 @@ use Slade\Scope;
  */
 class TextNode extends Node
 {
-    public static function parse($node, $inner, $depth, Scope & $scope, Scope & $sections)
+    public static function parse($node, $inner, $depth, Scope & $scope)
     {
         $node = substr($node.$inner,2);
 

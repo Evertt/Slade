@@ -9,7 +9,7 @@ use Slade\Scope;
  */
 class HtmlNode extends Node
 {
-    public static function parse($node, $inner, $depth, Scope & $scope, Scope & $sections)
+    public static function parse($node, $inner, $depth, Scope $scope)
     {
         $node .= indent($inner, $depth);
 
