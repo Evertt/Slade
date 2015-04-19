@@ -16,7 +16,7 @@ abstract class Node
         return ltrim($node, $node[0].' ');
     }
 
-    protected static function replaceVars(&$node, Scope $scope)
+    protected static function replaceVars($node, Scope $scope)
     {
         preg_match_all('/{{\s*(\w+)\s*}}/', $node, $escapedVars);
 
@@ -29,6 +29,8 @@ abstract class Node
         foreach ($unescapedVars[1] as $i => $var) {
             $node = str_replace($unescapedVars[0][$i], $scope[$var], $node);
         }
+
+        return $node;
     }
 
     protected static function getAttributes($string, Scope &$scope) {

@@ -13,7 +13,7 @@ class TextNode extends Node
     {
         $node = substr($node.$inner,2);
 
-        static::replaceVars($node, $scope);
+        $node = static::replaceVars($node, $scope);
 
         return $node;
     }

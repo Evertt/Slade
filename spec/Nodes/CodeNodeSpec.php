@@ -15,33 +15,24 @@ class CodeNodeSpec extends ObjectBehavior
 
     function it_should_parse_css_code(Scope $scope)
     {
-        $node = "css:\n";
-        $code = "body {color: #333;}\n";
-        $depth = 2;
-
-        $result =
-            '<style>' . str_repeat(' ', $depth) . PHP_EOL .
-            str_repeat(' ', $depth) . rtrim($code) . PHP_EOL .
-            '</style>' . PHP_EOL;
-
         $this
-            ::parse($node, $code, $depth, $scope, $scope)
-            ->shouldBe($result);
+            ::parse('css: body {color: #333;}', '', 0, $scope)
+            ->shouldBe('<style>body {color: #333;}</style>');
     }
 
     function it_should_parse_javascript_code(Scope $scope)
     {
-        $node = "javascript:\n";
-        $code = "console.log('test');\n";
-        $depth = 2;
+        $this
+            ::parse('javascript: console.log("test");', '', 0, $scope)
+            ->shouldBe('<script>console.log("test");</script>');
+    }
 
-        $result =
-            '<script>' . str_repeat(' ', $depth) . PHP_EOL .
-            str_repeat(' ', $depth) . rtrim($code) . PHP_EOL .
-            '</script>' . PHP_EOL;
+    function it_should_replace_variables(Scope $scope)
+    {
+        $scope->offsetGet('message')->willReturn('Hello World!');
 
         $this
-            ::parse($node, $code, $depth, $scope, $scope)
-            ->shouldBe($result);
+            ::parse('javascript: console.log("{{ message }}");', '', 0, $scope)
+            ->shouldBe('<script>console.log("Hello World!");</script>');
     }
 }

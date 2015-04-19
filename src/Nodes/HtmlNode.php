@@ -13,7 +13,7 @@ class HtmlNode extends Node
     {
         $node .= indent($inner, $depth);
 
-        static::replaceVars($node, $scope);
+        $node = static::replaceVars($node, $scope);
 
         return $node;
     }

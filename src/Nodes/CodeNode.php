@@ -2,12 +2,14 @@
 
 namespace Slade\nodes;
 
+use Slade\Scope;
+
 /**
  * @node /^javascript:|css:/
  */
 class CodeNode extends Node
 {
-    public static function parse($node, $inner, $depth)
+    public static function parse($node, $inner, $depth, Scope $scope)
     {
         $newLines = countNewLines($node.$inner);
 
@@ -21,6 +23,10 @@ class CodeNode extends Node
 
             $inner = indent($inner, $depth);
         }
+
+        $code = static::replaceVars($code, $scope);
+
+        $inner = static::replaceVars($inner, $scope);
 
         if (starts_with($node, 'javascript'))
         {
