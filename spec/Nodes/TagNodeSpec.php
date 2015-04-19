@@ -25,5 +25,16 @@ class TagNodeSpec extends ObjectBehavior
         $this
             ::parse('a', '', 0, $scope, $scope)
             ->shouldReturn('<a></a>');
+
+        $this
+            ::parse('my-component', '', 0, $scope, $scope)
+            ->shouldReturn('<my-component></my-component>');
+    }
+
+    function it_should_know_about_self_closing_elements(Scope $scope)
+    {
+        $this
+            ::parse('meta', '', 0, $scope, $scope)
+            ->shouldReturn('<meta>');
     }
 }
