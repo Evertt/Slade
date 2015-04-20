@@ -13,14 +13,14 @@ class TagNodeSpec extends ObjectBehavior
         $this->shouldHaveType('Slade\Nodes\TagNode');
     }
 
-    function it_should_parse_doctype_correctly(Scope $scope)
+    function it_parses_doctypes(Scope $scope)
     {
         $this
             ::parse('doctype html', '', 0, $scope, $scope)
             ->shouldReturn('<!DOCTYPE html>');
     }
 
-    function it_should_parse_lower_cased_text_as_an_html_tag(Scope $scope)
+    function it_parses_lower_cased_text_as_html_tags(Scope $scope)
     {
         $this
             ::parse('a', '', 0, $scope, $scope)
@@ -31,10 +31,23 @@ class TagNodeSpec extends ObjectBehavior
             ->shouldReturn('<my-component></my-component>');
     }
 
-    function it_should_know_about_self_closing_elements(Scope $scope)
+    function it_knows_about_self_closing_elements(Scope $scope)
     {
         $this
             ::parse('meta', '', 0, $scope, $scope)
             ->shouldReturn('<meta>');
+    }
+
+    function it_replaces_inline_variables(Scope $scope)
+    {
+        $scope->offsetGet('name')->willReturn('Evert');
+
+        $this
+            ::parse('span = name', '', 0, $scope, $scope)
+            ->shouldReturn('<span>Evert</span>');
+
+        $this
+            ::parse('p Hello, {{ name }}!', '', 0, $scope, $scope)
+            ->shouldReturn('<p>Hello, Evert!</p>');
     }
 }

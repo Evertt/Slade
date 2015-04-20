@@ -18,17 +18,20 @@ abstract class Node
 
     protected static function replaceVars($node, Scope $scope)
     {
-        preg_match_all('/{{\s*(\w+)\s*}}/', $node, $escapedVars);
+        preg_match_all('/(?<!\\\\){{\s*(\w+)\s*}}/', $node, $escapedVars);
 
         foreach ($escapedVars[1] as $i => $var) {
             $node = str_replace($escapedVars[0][$i], e($scope[$var]), $node);
         }
 
-        preg_match_all('/{!\s*(\w+)\s*!}/', $node, $unescapedVars);
+        preg_match_all('/(?<!\\\\){!\s*(\w+)\s*!}/', $node, $unescapedVars);
 
         foreach ($unescapedVars[1] as $i => $var) {
             $node = str_replace($unescapedVars[0][$i], $scope[$var], $node);
         }
+
+        $node = preg_replace('/\\\\({{\s*(\w+)\s*}})/', '$1', $node);
+        $node = preg_replace('/\\\\({!\s*(\w+)\s*!})/', '$1', $node);
 
         return $node;
     }

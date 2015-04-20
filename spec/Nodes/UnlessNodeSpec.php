@@ -13,19 +13,21 @@ class UnlessNodeSpec extends ObjectBehavior
         $this->shouldHaveType('Slade\Nodes\UnlessNode');
     }
 
-    function it_should_return_null_if_provided_with_a_truthy(Scope $scope)
+    function it_returns_null_if_provided_with_a_truthy(Scope $scope)
     {
-        $scope->offsetGet('items')->willReturn([1,2,3]);
-
-        $this::parse('? items', '', 0, $scope, $scope)->shouldBeNull();
-    }
-
-    function it_should_parse_inner_if_provided_with_a_falsy(Scope $scope)
-    {
-        $scope->offsetGet('items')->willReturn('');
+        $scope->offsetGet('messages')->willReturn(3);
 
         $this
-            ::parse('? items', '<p>returned</p>', 0, $scope, $scope)
-            ->shouldBe('<p>returned</p>');
+            ::parse('! messages', '| There are no messages for you.', 0, $scope, $scope)
+            ->shouldBeNull();
+    }
+
+    function it_parses_insides_if_provided_with_a_falsy(Scope $scope)
+    {
+        $scope->offsetGet('messages')->willReturn(0);
+
+        $this
+            ::parse('! messages', '| There are no messages for you.', 0, $scope, $scope)
+            ->shouldBe('There are no messages for you.');
     }
 }

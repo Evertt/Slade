@@ -52,6 +52,10 @@ class TagNode extends Node
         if (substr($content, 0, 1) == '=') {
             $content = trim(VariableNode::parse($content, null, $depth, $scope));
         }
+        else
+        {
+            $content = static::replaceVars($content, $scope);
+        }
 
         return "<$tagName$attributes>$content$infix</$tagName>" . str_repeat(PHP_EOL, $newLines);
     }

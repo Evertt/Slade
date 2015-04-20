@@ -13,7 +13,7 @@ class VariableNodeSpec extends ObjectBehavior
         $this->shouldHaveType('Slade\Nodes\VariableNode');
     }
 
-    function it_should_encode_variables_when_prefixed_with_a_single_equals_sign(Scope $scope)
+    function it_encodes_variables_when_prefixed_with_a_single_equals_sign(Scope $scope)
     {
         $scope->offsetGet('body')->willReturn('<p>some text</p>');
 
@@ -22,7 +22,7 @@ class VariableNodeSpec extends ObjectBehavior
             ->shouldReturn('&lt;p&gt;some text&lt;/p&gt;');
     }
 
-    function it_should_replace_variables_literally_when_prefixed_with_a_double_equals_sign(Scope $scope)
+    function it_replaces_variables_literally_when_prefixed_with_a_double_equals_sign(Scope $scope)
     {
         $scope->offsetGet('body')->willReturn('<p>some text</p>');
 

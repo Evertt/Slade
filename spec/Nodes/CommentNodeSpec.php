@@ -12,18 +12,18 @@ class CommentNodeSpec extends ObjectBehavior
         $this->shouldHaveType('Slade\Nodes\CommentNode');
     }
 
-    function it_should_return_null_when_provided_with_a_slade_comment()
+    function it_returns_null_when_provided_with_a_slade_comment()
     {
         $this::parse('/ So this should return null', '', 0)->shouldBeNull();
     }
 
-    function it_should_parse_an_inline_html_comment()
+    function it_parses_an_inline_html_comment()
     {
         $this::parse('/! This should be an HTML comment', '', 0)
                 ->shouldBe('<!-- This should be an HTML comment -->');
     }
 
-    function it_should_parse_an_html_comment_block()
+    function it_parses_an_html_comment_block()
     {
         $this::parse("/!\n", 'This should be an HTML comment', 0)
                 ->shouldBe("<!--  \nThis should be an HTML comment\n-->");
