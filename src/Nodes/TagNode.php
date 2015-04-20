@@ -10,7 +10,7 @@ use Slade\Parser;
  */
 class TagNode extends Node
 {
-    const self_closing_tags = [
+    public static $selfClosingTags = [
         'area','base','br','col','command','embed','hr','img',
         'input','keygen','link','meta','param','source','track','wbr',
     ];
@@ -154,7 +154,7 @@ class TagNode extends Node
 
     protected static function isSelfClosingTag($tag)
     {
-        return array_search($tag, static::self_closing_tags) !== false;
+        return array_search($tag, static::$selfClosingTags) !== false;
     }
 
     protected static function formatAttributeSpaces($attributes)
