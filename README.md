@@ -7,7 +7,7 @@ Use
 
     composer require evertt/slade
 
-to include this package into your Laravel project. Note, this package requires PHP 5.6 and Laravel 5. Then in `config/app.php` add `'Slade\SladeServiceProvider'` to your list of service providers.
+to include this package into your Laravel project. Note, this package requires PHP 5.5 and Laravel 5. Then in `config/app.php` add `'Slade\SladeServiceProvider'` to your list of service providers.
 
 ## Usage
 
