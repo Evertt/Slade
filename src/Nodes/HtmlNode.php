@@ -14,9 +14,11 @@ class HtmlNode extends Node
     {
         $block->indentInsides();
 
-        $line = $block->getLine() . $block->getInsides();
+        $line = $block->getLine();
+        $insides = $block->getInsides();
 
         $block->setLine(static::replaceVars($line, $scope));
+        $block->setInsides(static::replaceVars($insides, $scope));
 
         return $block;
     }
