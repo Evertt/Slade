@@ -3,22 +3,28 @@
 namespace Slade\nodes;
 
 use Slade\Scope;
+use Slade\TemplateBlock;
 
 /**
  * @node /^=/
  */
 class VariableNode extends Node
 {
-    public static function parse($node, $inner, $depth, Scope $scope)
+    public static function parse(TemplateBlock $block, Scope $scope)
     {
-        $newLines = countNewLines($node);
-        $varName = static::strip($node);
+        $line = $block->getLine();
+
+        $varName = static::strip($line);
         $var = $scope[$varName];
 
-        if (starts_with($node, '==')) {
-            return $var . repeat(PHP_EOL, $newLines);
+        if (starts_with($line, '==')) {
+            $block->setLine($var);
+
+            return $block;
         }
 
-        return e($var) . repeat(PHP_EOL, $newLines);
+        $block->setLine(e($var));
+
+        return $block;
     }
 }

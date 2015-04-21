@@ -28,7 +28,7 @@ class Slade
 
         foreach(static::$paths as $path)
         {
-            if ($file = file("$path/$fileName"))
+            if ($file = file_get_contents("$path/$fileName"))
             {
                 return $file;
             }

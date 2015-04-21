@@ -4,15 +4,17 @@ namespace Slade\nodes;
 
 use Slade\Parser;
 use Slade\Scope;
+use Slade\TemplateBlock;
 
 /**
  * @node /^>/
  */
 class ForeachNode extends Node
 {
-    public static function parse($node, $inner, $depth, Scope $scope, Scope $sections)
+    public static function parse(TemplateBlock $block, Scope $scope, Scope $sections)
     {
-        $var = static::strip($node);
+        $var = $block->stripLine();
+        $block->removeLine();
 
         $varName = substr($var, (strrpos($var, '.') ?: -1) + 1);
 
@@ -22,12 +24,12 @@ class ForeachNode extends Node
 
         foreach ($scope[$var] ?: [] as $item) {
             $html .= Parser::parse(
-                $inner,
+                $block . PHP_EOL,
                 new Scope([$itemName => $item], $scope),
                 $sections
             );
         }
 
-        return $html;
+        return finish($html, PHP_EOL);
     }
 }

@@ -3,18 +3,21 @@
 namespace Slade\nodes;
 
 use Slade\Scope;
+use Slade\TemplateBlock;
 
 /**
  * @node /^\|/
  */
 class TextNode extends Node
 {
-    public static function parse($node, $inner, $depth, Scope & $scope)
+    public static function parse(TemplateBlock $block, Scope & $scope)
     {
-        $node = substr($node.$inner,2);
+        $line = static::strip($block->getLine());
 
-        $node = static::replaceVars($node, $scope);
+        $line .= $block->getInsides();
 
-        return $node;
+        $line = static::replaceVars($line, $scope);
+
+        return $line;
     }
 }
