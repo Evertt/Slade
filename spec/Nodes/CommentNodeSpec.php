@@ -25,7 +25,7 @@ class CommentNodeSpec extends ObjectBehavior
 
     function it_parses_an_html_comment_block()
     {
-        $this::parse("/!\n", 'This should be an HTML comment', 0)
-                ->shouldBe("<!--  \nThis should be an HTML comment\n-->");
+        $this::parse("/!" . PHP_EOL, 'This should be an HTML comment', 0)
+                ->shouldBe("<!--  " . PHP_EOL . "This should be an HTML comment" . PHP_EOL . "-->");
     }
 }
