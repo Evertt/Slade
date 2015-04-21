@@ -1,5 +1,5 @@
 # Slade
-A PHP templating engine inspired by Slim
+A PHP templating engine inspired by Slim and Blade
 
 ## Install
 
