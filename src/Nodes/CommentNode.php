@@ -1,27 +1,24 @@
 <?php namespace Slade\Nodes;
 
+use Slade\TemplateBlock;
+
 /**
  * @node /^\//
  */
 class CommentNode extends Node
 {
-    public static function parse($node, $inner, $depth)
+    public static function parse(TemplateBlock $block)
     {
-        $newLines = countNewLines($node.$inner);
+        $line = $block->stripLine();
 
-        $node = static::strip($node);
-
-        if (starts_with($node, '!'))
+        if (starts_with($line, '!'))
         {
-            $node = static::strip($node);
+            $block->stripLine();
+            $block->indentInsides();
 
-            if ($inner)
-            {
-                $inner = surround($inner, PHP_EOL);
-                $inner = indent($inner, $depth);
-            }
+            $block->wrap('<!-- ', ' -->');
 
-            return "<!-- $node $inner-->" . repeat(PHP_EOL, $newLines);
+            return $block;
         }
     }
 }

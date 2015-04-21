@@ -4,15 +4,18 @@ namespace Slade\nodes;
 
 use Slade\Parser;
 use Slade\Scope;
+use Slade\TemplateBlock;
 
 /**
  * @node /^>/
  */
 class ForeachNode extends Node
 {
-    public static function parse($node, $inner, $depth, Scope $scope, Scope $sections)
+    public static function parse(TemplateBlock $block, Scope $scope, Scope $sections)
     {
-        $var = static::strip($node);
+        $inner = $block->getInsides() . repeat(PHP_EOL, $block->getNewLines()[1]);
+
+        $var = $block->stripLine();
 
         $varName = substr($var, (strrpos($var, '.') ?: -1) + 1);
 

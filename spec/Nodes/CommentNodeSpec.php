@@ -4,6 +4,7 @@ namespace spec\Slade\Nodes;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Slade\TemplateBlock;
 
 class CommentNodeSpec extends ObjectBehavior
 {
@@ -14,18 +15,24 @@ class CommentNodeSpec extends ObjectBehavior
 
     function it_returns_null_when_provided_with_a_slade_comment()
     {
-        $this::parse('/ So this should return null', '', 0)->shouldBeNull();
+        $block = new TemplateBlock('/ So this returns null');
+
+        $this::parse($block)->shouldBeNull();
     }
 
     function it_parses_an_inline_html_comment()
     {
-        $this::parse('/! This should be an HTML comment', '', 0)
-                ->shouldBe('<!-- This should be an HTML comment -->');
+        $block = new TemplateBlock('/! This is an inline HTML comment');
+
+        $this::parse($block)
+            ->shouldBeLike('<!-- This is an inline HTML comment -->');
     }
 
     function it_parses_an_html_comment_block()
     {
-        $this::parse("/!" . PHP_EOL, 'This should be an HTML comment', 0)
-                ->shouldBe("<!--  " . PHP_EOL . "This should be an HTML comment" . PHP_EOL . "-->");
+        $block = new TemplateBlock('/!' . PHP_EOL . '  This an HTML block comment');
+
+        $this::parse($block)
+            ->shouldBeLike('<!-- ' . PHP_EOL . 'This an HTML block comment' . PHP_EOL . ' -->');
     }
 }

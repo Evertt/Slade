@@ -4,27 +4,26 @@ namespace Slade\nodes;
 
 use Slade\Scope;
 use Slade\Parser;
+use Slade\TemplateBlock;
 
 /**
  * @node /^-/
  */
 class YieldNode extends Node
 {
-    public static function parse($node, $inner, $depth, Scope $scope, Scope $sections)
+    public static function parse(TemplateBlock $block, Scope $scope, Scope $sections)
     {
-        $newLines = countNewLines($node.$inner);
+        $section = static::strip($block->getLine());
 
-        $section = static::strip($node);
-
-        $html = $sections[$section];
-
-        if ($html)
+        if ($insides = $sections[$section])
         {
-            return $html . repeat(PHP_EOL, $newLines);
+            $block->setInsides($insides);
+
+            $block->removeLine();
+
+            return $block;
         }
-        else
-        {
-            return Parser::parse($inner, $scope, $sections);
-        }
+
+        return $block->parseInsides($scope, $sections);
     }
 }

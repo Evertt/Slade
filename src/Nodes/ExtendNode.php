@@ -5,20 +5,23 @@ namespace Slade\nodes;
 use Slade\Slade;
 use Slade\Scope;
 use Slade\Parser;
+use Slade\TemplateBlock;
 
 /**
  * @node /^_/
  */
 class ExtendNode extends Node
 {
-    public static function parse($node, $inner, $depth, Scope $scope, Scope $sections)
+    public static function parse(TemplateBlock $block, Scope $scope, Scope $sections)
     {
-        $file = Slade::retrieveFile(static::strip($node));
+        $fileName = static::strip($block->getLine());
 
-        $infix = explode(PHP_EOL, $inner);
+        $file = Slade::retrieveFile($fileName);
 
-        $template = array_merge($infix, $file);
+        $insides = $block->getInsides();
 
-        return Parser::parse($template, $scope, $sections);
+        $extendedTemplate = $insides . PHP_EOL . $file;
+
+        return Parser::parse($extendedTemplate, $scope, $sections);
     }
 }

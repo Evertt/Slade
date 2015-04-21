@@ -3,39 +3,51 @@
 namespace Slade\nodes;
 
 use Slade\Scope;
+use Slade\TemplateBlock;
 
 /**
  * @node /^javascript:|css:/
  */
 class CodeNode extends Node
 {
-    public static function parse($node, $inner, $depth, Scope $scope)
+    public static function parse(TemplateBlock $block, Scope $scope)
     {
-        $newLines = countNewLines($node.$inner);
+        $line = $block->getLine();
+        $insides = $block->getInsides();
 
-        $codeBegins = strpos($node, ':') + 2;
+        $code = static::extractCode($line);
+        $language = static::extractLanguage($line);
 
-        $code = trim(substr($node, $codeBegins));
+        $block->setLine(static::replaceVars($code, $scope));
 
-        if ($inner)
+        $block->setInsides(static::replaceVars($insides, $scope));
+
+        $block->indentInsides();
+
+        if ($language === 'javascript')
         {
-            $inner = surround($inner, PHP_EOL);
-
-            $inner = indent($inner, $depth);
+            $block->wrap('<script>', '</script>');
         }
 
-        $code = static::replaceVars($code, $scope);
-
-        $inner = static::replaceVars($inner, $scope);
-
-        if (starts_with($node, 'javascript'))
+        if ($language === 'css')
         {
-            return "<script>$code$inner</script>" . repeat(PHP_EOL, $newLines);
+            $block->wrap('<style>', '</style>');
         }
 
-        if (starts_with($node, 'css'))
-        {
-            return "<style>$code$inner</style>" . repeat(PHP_EOL, $newLines);
-        }
+        return $block;
+    }
+
+    protected static function extractLanguage($line)
+    {
+        preg_match('/^(\w+):/', $line, $match);
+
+        return isset($match[1]) ? $match[1] : null;
+    }
+
+    protected static function extractCode($line)
+    {
+        preg_match('/: (.*)$/', $line, $match);
+
+        return isset($match[1]) ? $match[1] : null;
     }
 }
