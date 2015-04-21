@@ -5,6 +5,7 @@ namespace spec\Slade\Nodes;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Slade\Scope;
+use Slade\TemplateBlock;
 
 class TagNodeSpec extends ObjectBehavior
 {
@@ -15,39 +16,51 @@ class TagNodeSpec extends ObjectBehavior
 
     function it_parses_doctypes(Scope $scope)
     {
+        $block = new TemplateBlock('doctype html');
+
         $this
-            ::parse('doctype html', '', 0, $scope, $scope)
-            ->shouldReturn('<!DOCTYPE html>');
+            ::parse($block, $scope, $scope)
+            ->shouldBeLike('<!DOCTYPE html>');
     }
 
     function it_parses_lower_cased_text_as_html_tags(Scope $scope)
     {
-        $this
-            ::parse('a', '', 0, $scope, $scope)
-            ->shouldReturn('<a></a>');
+        $block = new TemplateBlock('a');
 
         $this
-            ::parse('my-component', '', 0, $scope, $scope)
-            ->shouldReturn('<my-component></my-component>');
+            ::parse($block, $scope, $scope)
+            ->shouldBeLike('<a></a>');
+
+        $block = new TemplateBlock('my-component');
+
+        $this
+            ::parse($block, $scope, $scope)
+            ->shouldBeLike('<my-component></my-component>');
     }
 
     function it_knows_about_self_closing_elements(Scope $scope)
     {
+        $block = new TemplateBlock('meta');
+
         $this
-            ::parse('meta', '', 0, $scope, $scope)
-            ->shouldReturn('<meta>');
+            ::parse($block, $scope, $scope)
+            ->shouldBeLike('<meta>');
     }
 
     function it_replaces_inline_variables(Scope $scope)
     {
+        $block = new TemplateBlock('span = name');
+
         $scope->offsetGet('name')->willReturn('Evert');
 
         $this
-            ::parse('span = name', '', 0, $scope, $scope)
-            ->shouldReturn('<span>Evert</span>');
+            ::parse($block, $scope, $scope)
+            ->shouldBeLike('<span>Evert</span>');
+
+        $block = new TemplateBlock('p Hello, {{ name }}!');
 
         $this
-            ::parse('p Hello, {{ name }}!', '', 0, $scope, $scope)
-            ->shouldReturn('<p>Hello, Evert!</p>');
+            ::parse($block, $scope, $scope)
+            ->shouldBeLike('<p>Hello, Evert!</p>');
     }
 }

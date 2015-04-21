@@ -4,16 +4,17 @@ namespace Slade\nodes;
 
 use Slade\Scope;
 use Slade\Parser;
+use Slade\TemplateBlock;
 
 /**
  * @node /^@/
  */
 class SectionNode extends Node
 {
-    public static function parse($node, $inner, $depth, Scope $scope, Scope $sections)
+    public static function parse(TemplateBlock $block, Scope $scope, Scope $sections)
     {
-        $section = static::strip($node);
+        $section = static::strip($block->getLine());
 
-        $sections[$section] = Parser::parse($inner, $scope, $sections);
+        $sections[$section] = $block->parseInsides($scope, $sections);
     }
 }

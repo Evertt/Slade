@@ -3,18 +3,23 @@
 namespace Slade\nodes;
 
 use Slade\Scope;
+use Slade\TemplateBlock;
 
 /**
  * @node /^</
  */
 class HtmlNode extends Node
 {
-    public static function parse($node, $inner, $depth, Scope $scope)
+    public static function parse(TemplateBlock $block, Scope $scope)
     {
-        $node .= indent($inner, $depth);
+        $block->indentInsides();
 
-        $node = static::replaceVars($node, $scope);
+        $line = $block->getLine();
+        $insides = $block->getInsides();
 
-        return $node;
+        $block->setLine(static::replaceVars($line, $scope));
+        $block->setInsides(static::replaceVars($insides, $scope));
+
+        return $block;
     }
 }

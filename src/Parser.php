@@ -19,14 +19,10 @@ class Parser
         }
     }
 
-    public static function parse($lines = [], Scope & $scope = null, Scope & $sections = null)
+    public static function parse($template = '', Scope $scope = null, Scope $sections = null)
     {
         if (!static::$nodes) {
             static::initNodes();
-        }
-
-        if (is_string($lines)) {
-            $lines = preg_split('/$\R*^\K/m', $lines);
         }
 
         if (!$scope) {
@@ -37,100 +33,49 @@ class Parser
             $sections = new Scope();
         }
 
-        $nodes = static::getTopNodes($lines);
+        $blocks = static::getBlocks($template);
 
-        $html = static::parseNodes($nodes, $scope, $sections);
+        $html = static::parseBlocks($blocks, $scope, $sections);
 
         return $html;
     }
 
-    public static function getTopNodes($lines = [])
+    public static function getBlocks($template = '')
     {
-        $nodes = [];
+        $blocks = [];
+        $regex = '/\S[\s\S]*?((\r\n?|\n\r?)+(?=\S)|$)/D';
+        preg_match_all($regex, $template, $matches);
 
-        while ($line = reset($lines)) {
-            $depth = static::getDepth($line);
-
-            if ($depth === 0) {
-                $nodes[] = [
-                    'node' => ltrim(array_shift($lines), ' '),
-                    'inner' => '',
-                    'depth' => 0
-                ];
-            }
-
-            elseif ($depth > 0) {
-                static::appendLinesToLastNode($nodes, $lines);
-            }
-        }
-
-        return $nodes;
-    }
-
-    protected static function isEmpty($line) {
-        return !trim($line, "\r\n");
-    }
-
-    protected static function appendLinesToLastNode(&$nodes, &$lines) {
-        $inner = '';
-
-        while ($node = &$nodes[max(array_keys($nodes))])
+        foreach($matches[0] as $match)
         {
-            if (!static::isEmpty($node['node'])) break;
-
-            $inner .= array_pop($nodes)['node'];
+            $blocks[] = new TemplateBlock($match);
         }
 
-        $appendix = static::getInsides($lines, $node['depth']);
-        $node['inner'] .= $inner . $appendix['inner'];
-        $node['depth'] = $appendix['depth'];
+        return $blocks;
     }
 
-    protected static function getInsides(&$lines, $d = 0)
-    {
-        $insides = '';
-        $root = static::getDepth(reset($lines));
-
-        while ($line = reset($lines)) {
-            $depth = static::getDepth($line);
-
-            if ($depth < $root) {
-                break;
-            }
-
-            $insides .= substr(array_shift($lines), $d ?: $root);
-        }
-
-        return ['inner' => $insides, 'depth' => $d ?: $root];
-    }
-
-    public static function getDepth($line)
-    {
-        return strlen($line) - strlen(ltrim($line, ' '));
-    }
-
-    protected static function parseNodes($nodes, Scope & $scope, Scope & $sections)
+    protected static function parseBlocks($blocks, Scope $scope, Scope $sections)
     {
         $html = '';
 
-        foreach ($nodes as $node)
+        foreach ($blocks as $block)
         {
-            $html .= static::parseNode($node['node'], $node['inner'], $node['depth'], $scope, $sections);
+            $html .= static::parseBlock($block, $scope, $sections);
         }
 
         return $html;
     }
 
-    protected static function parseNode($node, $inner, $depth, Scope & $scope, Scope & $sections)
+    protected static function parseBlock($block, Scope $scope, Scope $sections)
     {
         foreach (static::$nodes as $pattern => $class)
         {
-            if (preg_match($pattern, $node))
+            if (preg_match($pattern, $block->getLine()))
             {
-                return $class::parse($node, $inner, $depth, $scope, $sections);
+                return $class::parse($block, $scope, $sections);
             }
         }
 
-        return $node . $inner;
+        return $block;
     }
 }

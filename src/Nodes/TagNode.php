@@ -4,6 +4,7 @@ namespace Slade\nodes;
 
 use Slade\Scope;
 use Slade\Parser;
+use Slade\TemplateBlock;
 
 /**
  * @node /^[a-z.#]/
@@ -17,15 +18,17 @@ class TagNode extends Node
 
     protected static $defaultTagName = 'div';
 
-    public static function parse($node, $inner, $depth, Scope $scope, Scope $sections)
+    public static function parse(TemplateBlock $block, Scope $scope, Scope $sections)
     {
-        $newLines = countNewLines($node.$inner);
+        $line = $block->getLine();
 
-        if (substr($node, 0, 7) == 'doctype') {
-            return static::parseDoctype(substr($node, 0, 8)) . str_repeat(PHP_EOL, $newLines);
+        if (substr($line, 0, 7) == 'doctype') {
+            $block->setLine(static::parseDoctype(substr($line, 0, 8)));
+
+            return $block;
         }
 
-        list($tag, $rest) = preg_split('/^\S+\K\s+|$/', $node);
+        list($tag, $rest) = preg_split('/^\S+\K\s+|$/', $line);
         list($tagName, $id, $class) = static::split($tag);
         list($attributes, $content) = static::splitAttrContent($rest);
         $attributes = "$id $class $attributes";
@@ -33,31 +36,29 @@ class TagNode extends Node
         $attributes = static::getAttributes($attributes, $scope)['string'];
         $attributes = $attributes ? " $attributes" : '';
 
-        $infix = Parser::parse($inner, $scope, $sections);
-
-        if ($infix) {
-            $infix = indent($infix, 2);
-            $infix = finish(rtrim($infix), PHP_EOL);
-            $content = finish($content, str_repeat(PHP_EOL, countNewLines($node)));
-        } else {
-            $content = rtrim($content);
-        }
-
         $attributes = static::combineClasses($attributes);
 
         if (static::isSelfClosingTag($tagName)) {
-            return "<$tagName$attributes>" . str_repeat(PHP_EOL, $newLines);
+            $block->setLine("<$tagName$attributes>");
+            $block->setInsides('');
+
+            return $block;
         }
 
         if (substr($content, 0, 1) == '=') {
-            $content = trim(VariableNode::parse($content, null, $depth, $scope));
+            $content = VariableNode::parse(new TemplateBlock($content), $scope);
         }
         else
         {
             $content = static::replaceVars($content, $scope);
         }
 
-        return "<$tagName$attributes>$content$infix</$tagName>" . str_repeat(PHP_EOL, $newLines);
+        $block->setLine($content);
+        $block->parseInsides($scope, $sections);
+        $block->indentInsides();
+        $block->wrap("<$tagName$attributes>", "</$tagName>");
+
+        return $block;
     }
 
     protected static function split($tag)
@@ -155,13 +156,6 @@ class TagNode extends Node
     protected static function isSelfClosingTag($tag)
     {
         return array_search($tag, static::$selfClosingTags) !== false;
-    }
-
-    protected static function formatAttributeSpaces($attributes)
-    {
-        $attributes = trim(str_replace('  ', ' ', $attributes));
-
-        return $attributes ? " $attributes" : '';
     }
 
 }
