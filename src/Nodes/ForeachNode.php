@@ -13,9 +13,8 @@ class ForeachNode extends Node
 {
     public static function parse(TemplateBlock $block, Scope $scope, Scope $sections)
     {
-        $inner = $block->getInsides() . repeat(PHP_EOL, $block->getNewLines()[1]);
-
         $var = $block->stripLine();
+        $block->removeLine();
 
         $varName = substr($var, (strrpos($var, '.') ?: -1) + 1);
 
@@ -25,12 +24,12 @@ class ForeachNode extends Node
 
         foreach ($scope[$var] ?: [] as $item) {
             $html .= Parser::parse(
-                $inner,
+                $block . PHP_EOL,
                 new Scope([$itemName => $item], $scope),
                 $sections
             );
         }
 
-        return $html;
+        return finish($html, PHP_EOL);
     }
 }

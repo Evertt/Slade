@@ -15,8 +15,13 @@ class UnlessNode extends Node
     {
         $var = static::strip($block->getLine());
 
-        if (!$scope[$var]) {
-            return $block->parseInsides($scope, $sections);
+        if (!$scope[$var])
+        {
+            $block->removeLine();
+
+            $block->parseInsides($scope, $sections);
+
+            return $block;
         }
     }
 }

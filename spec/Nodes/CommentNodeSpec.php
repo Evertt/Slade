@@ -33,6 +33,6 @@ class CommentNodeSpec extends ObjectBehavior
         $block = new TemplateBlock('/!' . PHP_EOL . '  This an HTML block comment');
 
         $this::parse($block)
-            ->shouldBeLike('<!-- ' . PHP_EOL . 'This an HTML block comment' . PHP_EOL . ' -->');
+            ->shouldBeLike('<!-- ' . PHP_EOL . '  This an HTML block comment' . PHP_EOL . ' -->');
     }
 }

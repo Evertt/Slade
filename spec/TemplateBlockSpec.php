@@ -19,6 +19,6 @@ class TemplateBlockSpec extends ObjectBehavior
 
     function it_extracts_new_lines_from_block()
     {
-        $this->getNewLines()->shouldReturn([1,0]);
+        $this->getNewLines()->shouldReturn([0,1]);
     }
 }

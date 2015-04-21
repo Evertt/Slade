@@ -14,7 +14,7 @@ class TemplateBlock
     public function __construct($block)
     {
         $line = strtok($block, "\r\n");
-        $insides = str_replace($line, null, $block);
+        $insides = substr($block, strlen($line));
         $newLines = $this->countNewLines($insides);
         $insides = trim($insides, "\r\n");
 
@@ -31,19 +31,19 @@ class TemplateBlock
     {
         $newLinesAtStart = $newLinesAtEnd = 0;
 
-        preg_match_all('/^(\r\n?|\n\r?)+/', $str, $newLines);
-
-        if ($newLines[0])
-        {
-            $newLinesAtStart = strlen($newLines[0][0]) / strlen($newLines[1][0]);
-        }
-
-        $str = preg_replace('/^(\r\n?|\n\r?)+/', '', $str);
         preg_match_all('/(\r\n?|\n\r?)+$/', $str, $newLines);
 
         if ($newLines[0])
         {
             $newLinesAtEnd = strlen($newLines[0][0]) / strlen($newLines[1][0]);
+        }
+
+        $str = preg_replace('/(\r\n?|\n\r?)+$/', '', $str);
+        preg_match_all('/^(\r\n?|\n\r?)+/', $str, $newLines);
+
+        if ($newLines[0])
+        {
+            $newLinesAtStart = strlen($newLines[0][0]) / strlen($newLines[1][0]);
         }
 
         return [$newLinesAtStart, $newLinesAtEnd];
@@ -113,7 +113,7 @@ class TemplateBlock
     {
         if ($this->insides)
         {
-            indent($this->insides, $this->indentation);
+            $this->insides = indent($this->insides, $this->indentation);
         }
 
         return $this->insides;
@@ -125,7 +125,7 @@ class TemplateBlock
 
         if ($this->insides)
         {
-            $this->insides .= PHP_EOL;
+            $this->insides = finish($this->insides, PHP_EOL);
         }
 
         $this->postfix = $postfix;
