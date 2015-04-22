@@ -13,8 +13,25 @@ class SectionNode extends Node
 {
     public static function parse(TemplateBlock $block, Scope $scope, Scope $sections)
     {
-        $section = static::strip($block->getLine());
+        $line = $block->stripLine();
 
-        $sections[$section] = $block->parseInsides($scope, $sections);
+        list($section, $content) = array_pad(explode(' ', $line, 2), 2, '');
+
+        if (starts_with($content, '='))
+        {
+            $result = VariableNode::parse(new TemplateBlock($content), $scope);
+        }
+
+        elseif ($content)
+        {
+            $result = e($content);
+        }
+
+        else
+        {
+            $result = $block->parseInsides($scope, $sections);
+        }
+
+        $sections[$section] = $result;
     }
 }

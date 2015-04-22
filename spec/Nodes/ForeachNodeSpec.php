@@ -24,6 +24,55 @@ class ForeachNodeSpec extends ObjectBehavior
 
         $this
             ::parse($block, $scope, $scope)
-            ->shouldBeLike('<span>1</span><span>2</span><span>3</span>');
+            ->shouldBeLike(
+                '<span>1</span>' . PHP_EOL .
+                '<span>2</span>' . PHP_EOL .
+                '<span>3</span>' . PHP_EOL
+            );
+    }
+
+    function it_lets_the_developer_choose_their_own_variable_name(Scope $scope)
+    {
+        $block = new TemplateBlock('> rain > droplet' . PHP_EOL . '  span = droplet.size');
+
+        $scope
+            ->offsetGet('rain')
+            ->willReturn([['size' => '1ml'],['size' => '5ml']]);
+
+        $this
+            ::parse($block, $scope, $scope)
+            ->shouldBeLike(
+                '<span>1ml</span>' . PHP_EOL .
+                '<span>5ml</span>' . PHP_EOL
+            );
+    }
+
+    function it_lets_the_developer_choose_no_variable_name(Scope $scope)
+    {
+        $block = new TemplateBlock('> rain >' . PHP_EOL . '  span = size');
+
+        $scope
+            ->offsetGet('rain')
+            ->willReturn([['size' => '1ml'],['size' => '5ml']]);
+
+        $this
+            ::parse($block, $scope, $scope)
+            ->shouldBeLike(
+                '<span>1ml</span>' . PHP_EOL .
+                '<span>5ml</span>' . PHP_EOL
+            );
+
+        $block = new TemplateBlock('> messages >' . PHP_EOL . '  span = self');
+
+        $scope
+            ->offsetGet('messages')
+            ->willReturn(['Hello', 'World!']);
+
+        $this
+            ::parse($block, $scope, $scope)
+            ->shouldBeLike(
+                '<span>Hello</span>' . PHP_EOL .
+                '<span>World!</span>' . PHP_EOL
+            );
     }
 }

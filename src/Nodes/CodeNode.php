@@ -10,7 +10,7 @@ use Slade\TemplateBlock;
  */
 class CodeNode extends Node
 {
-    public static function parse(TemplateBlock $block, Scope $scope)
+    public static function parse(TemplateBlock $block, Scope $scope, Scope $sections)
     {
         $line = $block->getLine();
         $insides = $block->getInsides();
@@ -18,9 +18,9 @@ class CodeNode extends Node
         $code = static::extractCode($line);
         $language = static::extractLanguage($line);
 
-        $block->setLine(static::replaceVars($code, $scope));
+        $block->setLine(static::replaceVars($code, $scope, $sections));
 
-        $block->setInsides(static::replaceVars($insides, $scope));
+        $block->setInsides(static::replaceVars($insides, $scope, $sections));
 
         $block->indentInsides();
 

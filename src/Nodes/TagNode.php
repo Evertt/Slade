@@ -50,7 +50,7 @@ class TagNode extends Node
         }
         else
         {
-            $content = static::replaceVars($content, $scope);
+            $content = static::replaceVars($content, $scope, $sections);
         }
 
         $block->setLine($content);

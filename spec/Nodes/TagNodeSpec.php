@@ -63,4 +63,22 @@ class TagNodeSpec extends ObjectBehavior
             ::parse($block, $scope, $scope)
             ->shouldBeLike('<p>Hello, Evert!</p>');
     }
+
+    function it_converts_hash_signs_to_id_attributes(Scope $scope)
+    {
+        $block = new TemplateBlock('#id');
+
+        $this
+            ::parse($block, $scope, $scope)
+            ->shouldBeLike('<div id="id"></div>');
+    }
+
+    function it_converts_dot_signs_to_class_attributes(Scope $scope)
+    {
+        $block = new TemplateBlock('.first.second');
+
+        $this
+            ::parse($block, $scope, $scope)
+            ->shouldBeLike('<div class="first second"></div>');
+    }
 }

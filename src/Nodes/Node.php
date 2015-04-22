@@ -16,7 +16,7 @@ abstract class Node
         return ltrim($node, $node[0].' ');
     }
 
-    protected static function replaceVars($node, Scope $scope)
+    protected static function replaceVars($node, Scope $scope, Scope $sections)
     {
         preg_match_all('/(?<!\\\\){{\s*(\w+)\s*}}/', $node, $escapedVars);
 
@@ -30,8 +30,15 @@ abstract class Node
             $node = str_replace($unescapedVars[0][$i], $scope[$var], $node);
         }
 
+        preg_match_all('/(?<!\\\\){-\s*(\w+)\s*-}/', $node, $yieldedSections);
+
+        foreach ($yieldedSections[1] as $i => $var) {
+            $node = str_replace($yieldedSections[0][$i], $sections[$var], $node);
+        }
+
         $node = preg_replace('/\\\\({{\s*(\w+)\s*}})/', '$1', $node);
         $node = preg_replace('/\\\\({!\s*(\w+)\s*!})/', '$1', $node);
+        $node = preg_replace('/\\\\({-\s*(\w+)\s*-})/', '$1', $node);
 
         return $node;
     }
