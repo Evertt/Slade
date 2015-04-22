@@ -17,7 +17,7 @@ class ConditionalNode extends Node
 
         $conditional = preg_replace(
             '/\b(?<![\'"])([^\W\d][\w.]*)\b(?![\'"])/',
-            '$scope["$1"]',
+            '$scope[\'$1\']',
             $block->stripLine()
         );
 

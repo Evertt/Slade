@@ -12,12 +12,17 @@ class VariableNode extends Node
 {
     public static function parse(TemplateBlock $block, Scope $scope)
     {
-        $line = $block->getLine();
+        $sign = $block->getLine()[1];
 
-        $varName = static::strip($line);
-        $var = $scope[$varName];
+        $statement = preg_replace(
+            '/\b(?<![\'"$])([^\W\d][\w.]*)\b(?![\'"(:-])/',
+            '$scope[\'$1\']',
+            $block->stripLine()
+        );
 
-        if (starts_with($line, '==')) {
+        $var = eval('return ' . $statement . ';');
+
+        if ($sign == '=') {
             $block->setLine($var);
 
             return $block;
