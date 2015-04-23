@@ -96,7 +96,7 @@ _ layouts.default
     p This paragraph will be assigned to the 'content' section
 ```
 
-Which will then extend `resources/views/layouts/default.slade` and the paragraph will appear wherever the following line is included in `layouts/default.slade`:
+Which will then extend for example `layouts/default.slade` and the paragraph will appear wherever the following line is included in `layouts/default.slade`:
 
 ```slim
 - content
