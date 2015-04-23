@@ -7,7 +7,15 @@ Use
 
     composer require evertt/slade
 
-to include this package into your Laravel project. Note, this package requires PHP 5.5 and Laravel 5. Then in `config/app.php` add `'Slade\SladeServiceProvider'` to your list of service providers.
+to include this package into your project. Note, this package requires PHP 5.5. If you want to use it with Laravel, then in `config/app.php` add `'Slade\SladeServiceProvider'` to your list of service providers. If you want to use this package independently from Laravel, then just make sure you set `Slade::$templatePaths` to an array of the paths to the root folder of your templates.
+
+So if you set:
+
+```php
+Slade::$templatePaths = ['/my-project/views', '/my-project/some-vendor/views'];
+```
+
+And you ask Slade to parse the view `users.index` then it will first look for the file `/my-project/views/users/index.slade` and if that doesn't exist it will look for `/my-project/some-vendor/views/users/index.slade`.
 
 ## Usage
 
@@ -23,7 +31,6 @@ at the top of your controller file and then in any action use:
 return Slade::parse('users.index', compact('user'));
 ```
 
-Slade assumes that all slade view files end in `.slade`. So `users.index` points to the view file `resources/views/users/index.slade`.
 
 ## Example
 

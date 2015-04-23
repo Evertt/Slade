@@ -2,7 +2,7 @@
 
 class Slade
 {
-    public static $paths = [];
+    public static $templatePaths = [];
 
     public static function parse($fileName, $scope = [], $sections = [])
     {
@@ -24,7 +24,7 @@ class Slade
         $fileName = str_replace('.', '/', $fileName);
         $fileName .= '.slade';
 
-        foreach(static::$paths as $path)
+        foreach(static::$templatePaths as $path)
         {
             if ($file = file_get_contents("$path/$fileName"))
             {
