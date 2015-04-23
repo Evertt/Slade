@@ -19,7 +19,7 @@ And you ask Slade to parse the view `users.index` then it will first look for th
 
 ## Usage
 
-To use this engine in your controller, simply put
+To use this engine in your controller for example, simply put
 
 ```php
 use Slade\Slade;
