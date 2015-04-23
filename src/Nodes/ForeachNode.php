@@ -27,7 +27,7 @@ class ForeachNode extends Node
             $itemName = 'self';
 
         else
-            $itemName = str_singular($varName);
+            $itemName = singular($varName);
 
         $html = '';
 

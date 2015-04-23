@@ -1,6 +1,5 @@
 <?php namespace Slade;
 
-use Slade\Slade;
 use Illuminate\Support\ServiceProvider;
 
 class SladeServiceProvider extends ServiceProvider {

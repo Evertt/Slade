@@ -1,6 +1,6 @@
 {
     "name": "evertt/slade",
-    "description": "A templating for Laravel inspired by Ruby Slim",
+    "description": "A templating for Laravel inspired by Ruby Slim and Laravel Blade",
     "keywords": ["slade", "templating engine", "laravel", "slim", "blade", "templating"],
     "license": "MIT",
     "support": {
@@ -23,7 +23,7 @@
     },
     "require": {
         "php": ">=5.5.0",
-        "illuminate/support": "~5.0"
+        "doctrine/inflector": "~1.0"
     },
     "require-dev": {
         "phpspec/phpspec": "~2.1"

@@ -1,6 +1,4 @@
-<?php
-
-namespace Slade;
+<?php namespace Slade;
 
 class Slade
 {
