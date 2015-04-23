@@ -18,7 +18,7 @@ class CodeNodeSpec extends ObjectBehavior
     {
         $block = new TemplateBlock('css: body {color: #333;}');
 
-        $this
+        static
             ::parse($block, $scope, $sections)
             ->shouldBeLike('<style>body {color: #333;}</style>');
     }
@@ -27,7 +27,7 @@ class CodeNodeSpec extends ObjectBehavior
     {
         $block = new TemplateBlock('javascript: console.log("test");');
 
-        $this
+        static
             ::parse($block, $scope, $sections)
             ->shouldBeLike('<script>console.log("test");</script>');
     }
@@ -37,7 +37,7 @@ class CodeNodeSpec extends ObjectBehavior
         $scope->offsetGet('message')->willReturn('Hello World!');
         $block = new TemplateBlock('javascript: console.log("{{ message }}");');
 
-        $this
+        static
             ::parse($block, $scope, $sections)
             ->shouldBeLike('<script>console.log("Hello World!");</script>');
     }
@@ -47,7 +47,7 @@ class CodeNodeSpec extends ObjectBehavior
         $scope->offsetGet('message')->willReturn('Hello World!');
         $block = new TemplateBlock('javascript: console.log("\{{ message }}");');
 
-        $this
+        static
             ::parse($block, $scope, $sections)
             ->shouldBeLike('<script>console.log("{{ message }}");</script>');
     }

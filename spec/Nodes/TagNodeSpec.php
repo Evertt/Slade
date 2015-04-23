@@ -18,7 +18,7 @@ class TagNodeSpec extends ObjectBehavior
     {
         $block = new TemplateBlock('doctype html');
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeLike('<!DOCTYPE html>');
     }
@@ -27,13 +27,13 @@ class TagNodeSpec extends ObjectBehavior
     {
         $block = new TemplateBlock('a');
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeLike('<a></a>');
 
         $block = new TemplateBlock('my-component');
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeLike('<my-component></my-component>');
     }
@@ -42,7 +42,7 @@ class TagNodeSpec extends ObjectBehavior
     {
         $block = new TemplateBlock('meta');
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeLike('<meta>');
     }
@@ -53,13 +53,13 @@ class TagNodeSpec extends ObjectBehavior
 
         $scope->offsetGet('name')->willReturn('Evert');
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeLike('<span>Evert</span>');
 
         $block = new TemplateBlock('p Hello, {{ name }}!');
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeLike('<p>Hello, Evert!</p>');
     }
@@ -68,7 +68,7 @@ class TagNodeSpec extends ObjectBehavior
     {
         $block = new TemplateBlock('#id');
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeLike('<div id="id"></div>');
     }
@@ -77,7 +77,7 @@ class TagNodeSpec extends ObjectBehavior
     {
         $block = new TemplateBlock('.first.second');
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeLike('<div class="first second"></div>');
     }

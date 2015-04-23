@@ -22,7 +22,7 @@ class ForeachNodeSpec extends ObjectBehavior
             ->offsetGet('indices')
             ->willReturn([['id' => 1], ['id' => 2], ['id' => 3]]);
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeLike(
                 '<span>1</span>' . PHP_EOL .
@@ -39,7 +39,7 @@ class ForeachNodeSpec extends ObjectBehavior
             ->offsetGet('rain')
             ->willReturn([['size' => '1ml'],['size' => '5ml']]);
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeLike(
                 '<span>1ml</span>' . PHP_EOL .
@@ -55,7 +55,7 @@ class ForeachNodeSpec extends ObjectBehavior
             ->offsetGet('rain')
             ->willReturn([['size' => '1ml'],['size' => '5ml']]);
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeLike(
                 '<span>1ml</span>' . PHP_EOL .
@@ -68,7 +68,7 @@ class ForeachNodeSpec extends ObjectBehavior
             ->offsetGet('messages')
             ->willReturn(['Hello', 'World!']);
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeLike(
                 '<span>Hello</span>' . PHP_EOL .

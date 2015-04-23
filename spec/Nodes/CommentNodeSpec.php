@@ -17,14 +17,14 @@ class CommentNodeSpec extends ObjectBehavior
     {
         $block = new TemplateBlock('/ So this returns null');
 
-        $this::parse($block)->shouldBeNull();
+        static::parse($block)->shouldBeNull();
     }
 
     function it_parses_an_inline_html_comment()
     {
         $block = new TemplateBlock('/! This is an inline HTML comment');
 
-        $this::parse($block)
+        static::parse($block)
             ->shouldBeLike('<!-- This is an inline HTML comment -->');
     }
 
@@ -32,7 +32,7 @@ class CommentNodeSpec extends ObjectBehavior
     {
         $block = new TemplateBlock('/!' . PHP_EOL . '  This an HTML block comment');
 
-        $this::parse($block)
+        static::parse($block)
             ->shouldBeLike('<!-- ' . PHP_EOL . '  This an HTML block comment' . PHP_EOL . ' -->');
     }
 }

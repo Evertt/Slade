@@ -22,7 +22,7 @@ class ConditionalNodeSpec extends ObjectBehavior
 
         $scope->offsetGet('messages')->willReturn(0);
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeNull();
     }
@@ -35,7 +35,7 @@ class ConditionalNodeSpec extends ObjectBehavior
 
         $scope->offsetGet('messages')->willReturn(3);
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeLike('You have 3 messages!');
     }
@@ -48,7 +48,7 @@ class ConditionalNodeSpec extends ObjectBehavior
 
         $scope->offsetGet('messages')->willReturn(0);
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeLike('You have no messages...');
     }
@@ -63,7 +63,7 @@ class ConditionalNodeSpec extends ObjectBehavior
         $scope->offsetGet('messages')->willReturn(3);
         $scope->offsetGet('user.role')->willReturn('administrator');
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeLike('You have 3 messages!');
     }

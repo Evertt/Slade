@@ -18,7 +18,7 @@ class HtmlNodeSpec extends ObjectBehavior
     {
         $block = new TemplateBlock('<a></a>');
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeLike('<a></a>');
     }
@@ -28,7 +28,7 @@ class HtmlNodeSpec extends ObjectBehavior
         $block = new TemplateBlock('<span>{{author}}</span>');
         $scope->offsetGet('author')->willReturn('Evert');
 
-        $this
+        static
             ::parse($block, $scope, $scope)
             ->shouldBeLike('<span>Evert</span>');
     }

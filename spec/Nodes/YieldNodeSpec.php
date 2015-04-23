@@ -22,7 +22,7 @@ class YieldNodeSpec extends ObjectBehavior
         );
         $sections->offsetGet('content')->willReturn('<p>Hello World!</p>');
 
-        $this
+        static
             ::parse($block, $sections, $sections)
             ->shouldBeLike('<p>Hello World!</p>');
     }
@@ -35,7 +35,7 @@ class YieldNodeSpec extends ObjectBehavior
         );
         $sections->offsetGet('content')->willReturn(null);
 
-        $this
+        static
             ::parse($block, $sections, $sections)
             ->shouldBeLike('<p>This is default content.</p>');
     }

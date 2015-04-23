@@ -19,7 +19,7 @@ class VariableNodeSpec extends ObjectBehavior
         $block = new TemplateBlock('= body');
         $scope->offsetGet('body')->willReturn('<p>some text</p>');
 
-        $this
+        static
             ::parse($block, $scope)->__toString()
             ->shouldBeLike('&lt;p&gt;some text&lt;/p&gt;');
     }
@@ -29,7 +29,7 @@ class VariableNodeSpec extends ObjectBehavior
         $block = new TemplateBlock('== body');
         $scope->offsetGet('body')->willReturn('<p>some text</p>');
 
-        $this
+        static
             ::parse($block, $scope)
             ->shouldBeLike('<p>some text</p>');
     }
@@ -39,7 +39,7 @@ class VariableNodeSpec extends ObjectBehavior
         $block = new TemplateBlock('= str_repeat("ha", user.laughs)');
         $scope->offsetGet('user.laughs')->willReturn(3);
 
-        $this
+        static
             ::parse($block, $scope)
             ->shouldBeLike('hahaha');
     }

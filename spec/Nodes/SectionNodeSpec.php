@@ -18,7 +18,7 @@ class SectionNodeSpec extends ObjectBehavior
     {
         $block = new TemplateBlock('@ content' . PHP_EOL . '  h1 My blog');
 
-        $this::parse($block, $scope, $sections);
+        static::parse($block, $scope, $sections);
 
         $sections->offsetSet('content', '<h1>My blog</h1>')->shouldHaveBeenCalled();
     }
@@ -27,7 +27,7 @@ class SectionNodeSpec extends ObjectBehavior
     {
         $block = new TemplateBlock('@ title My page title');
 
-        $this::parse($block, $scope, $sections);
+        static::parse($block, $scope, $sections);
 
         $sections->offsetSet('title', 'My page title')->shouldHaveBeenCalled();
     }
@@ -38,7 +38,7 @@ class SectionNodeSpec extends ObjectBehavior
 
         $scope->offsetGet('title')->willReturn('My page title');
 
-        $this::parse($block, $scope, $sections);
+        static::parse($block, $scope, $sections);
 
         $sections->offsetSet('title', 'My page title')->shouldHaveBeenCalled();
     }
