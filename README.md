@@ -1,5 +1,5 @@
 # Slade
-A Laravel templating engine inspired by Slim and Blade
+A PHP templating engine inspired by both Ruby Slim and Laravel Blade
 
 ## Install
 
