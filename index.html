@@ -25,33 +25,6 @@
 <p>A PHP templating engine inspired by both Ruby Slim and Laravel Blade</p>
 
 <h2>
-<a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h2>
-
-<p>Use</p>
-
-<pre><code>composer require evertt/slade
-</code></pre>
-
-<p>to include this package into your project. Note, this package requires PHP 5.5. If you want to use it with Laravel, then in <code>config/app.php</code> add <code>'Slade\SladeServiceProvider'</code> to your list of service providers. If you want to use this package independently from Laravel, then just make sure you set <code>Slade::$templatePaths</code> to an array of the paths to the root folder of your templates.</p>
-
-<p>So if you set:</p>
-
-<div class="highlight highlight-php"><pre><span class="pl-s1"><span class="pl-c1">Slade</span><span class="pl-k">::</span><span class="pl-smi">$templatePaths</span> <span class="pl-k">=</span> [<span class="pl-s"><span class="pl-pds">'</span>/my-project/views<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>/my-project/some-vendor/views<span class="pl-pds">'</span></span>];</span></pre></div>
-
-<p>And you ask Slade to parse the view <code>users.index</code> then it will first look for the file <code>/my-project/views/users/index.slade</code> and if that doesn't exist it will look for <code>/my-project/some-vendor/views/users/index.slade</code>.</p>
-
-<h2>
-<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
-
-<p>To use this engine in your controller for example, simply put</p>
-
-<div class="highlight highlight-php"><pre><span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Slade\Slade</span>;</span></pre></div>
-
-<p>at the top of your controller file and then in any action use:</p>
-
-<div class="highlight highlight-php"><pre><span class="pl-s1"><span class="pl-k">return</span> <span class="pl-c1">Slade</span><span class="pl-k">::</span>parse(<span class="pl-s"><span class="pl-pds">'</span>users.index<span class="pl-pds">'</span></span>, <span class="pl-c1">compact</span>(<span class="pl-s"><span class="pl-pds">'</span>user<span class="pl-pds">'</span></span>));</span></pre></div>
-
-<h2>
 <a id="example" class="anchor" href="#example" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h2>
 
 <p>The following template</p>
@@ -113,6 +86,33 @@
 <p>Which will then extend for example <code>layouts/default.slade</code> and the paragraph will appear wherever the following line is included in <code>layouts/default.slade</code>:</p>
 
 <div class="highlight highlight-slim"><pre>-<span class="pl-sre"> content</span></pre></div>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Use</p>
+
+<pre><code>composer require evertt/slade
+</code></pre>
+
+<p>to include this package into your project. Note, this package requires PHP 5.5. If you want to use it with Laravel, then in <code>config/app.php</code> add <code>'Slade\SladeServiceProvider'</code> to your list of service providers. If you want to use this package independently from Laravel, then just make sure you set <code>Slade::$templatePaths</code> to an array of the paths to the root folder of your templates.</p>
+
+<p>So if you set:</p>
+
+<div class="highlight highlight-php"><pre><span class="pl-s1"><span class="pl-c1">Slade</span><span class="pl-k">::</span><span class="pl-smi">$templatePaths</span> <span class="pl-k">=</span> [<span class="pl-s"><span class="pl-pds">'</span>/my-project/views<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>/my-project/some-vendor/views<span class="pl-pds">'</span></span>];</span></pre></div>
+
+<p>And you ask Slade to parse the view <code>users.index</code> then it will first look for the file <code>/my-project/views/users/index.slade</code> and if that doesn't exist it will look for <code>/my-project/some-vendor/views/users/index.slade</code>.</p>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>To use this engine in your controller for example, simply put</p>
+
+<div class="highlight highlight-php"><pre><span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Slade\Slade</span>;</span></pre></div>
+
+<p>at the top of your controller file and then in any action use:</p>
+
+<div class="highlight highlight-php"><pre><span class="pl-s1"><span class="pl-k">return</span> <span class="pl-c1">Slade</span><span class="pl-k">::</span>parse(<span class="pl-s"><span class="pl-pds">'</span>users.index<span class="pl-pds">'</span></span>, <span class="pl-c1">compact</span>(<span class="pl-s"><span class="pl-pds">'</span>user<span class="pl-pds">'</span></span>));</span></pre></div>
 
 <p>Check the <a href="https://github.com/Evertt/Slade/wiki">wiki</a> for more information.</p>
 
