@@ -6,7 +6,7 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class A {
-    public $b = 'hi';
+    public static $b = 'hi';
 }
 
 class C {
