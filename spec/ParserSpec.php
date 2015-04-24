@@ -11,4 +11,9 @@ class ParserSpec extends ObjectBehavior
     {
         $this->shouldHaveType('Slade\Parser');
     }
+
+    function it_should_return_nothing_when_given_nothing()
+    {
+        static::parse()->shouldReturn('');
+    }
 }

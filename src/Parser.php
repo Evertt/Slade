@@ -8,7 +8,8 @@ class Parser
 
     public static function initNodes()
     {
-        foreach (glob(__DIR__.'/nodes/*?Node.php') as $filename) {
+        foreach (glob(__DIR__.'/nodes/*?Node.php') as $filename)
+        {
             $class = 'Slade\Nodes\\'.basename($filename, '.php');
 
             $rc = new \ReflectionClass($class);
@@ -21,17 +22,11 @@ class Parser
 
     public static function parse($template = '', Scope $scope = null, Scope $sections = null)
     {
-        if (!static::$nodes) {
-            static::initNodes();
-        }
+        if (!static::$nodes) static::initNodes();
 
-        if (!$scope) {
-            $scope = new Scope();
-        }
+        $scope = $scope ?: new Scope();
 
-        if (!$sections) {
-            $sections = new Scope();
-        }
+        $sections = $sections ?: new Scope();
 
         $blocks = static::getBlocks($template);
 
