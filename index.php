@@ -9,6 +9,7 @@ function pr($var) {
 }
 
 Slade\Slade::$templatePaths = [__DIR__ . '/templates'];
+
 echo Slade\Slade::parse('index', [
     'title' => '<< An escaped title >>',
     'body' => '<strong>This is my unescaped body text</strong>',
@@ -21,4 +22,3 @@ echo Slade\Slade::parse('index', [
     ],
     'post' => ['body' => '<em>very important</em>']
 ]);
-/**/
