@@ -47,6 +47,11 @@ html
     title Slade
     link href="style.css"
     
+    css:
+      body {
+        color: #333;
+      }
+    
   body
     h1 My first Slade template!
     
@@ -57,6 +62,11 @@ html
     
     ! name
       p There is no name.
+      
+    div
+      <p>
+        It also works fine with just plain html.
+      </p>
       
     h2 Here is a list of names of people:
     ul
@@ -72,6 +82,12 @@ Could parse into the following HTML:
   <head>
     <title>Slade</title>
     <link href="style.css">
+    
+    <style>
+      body {
+        color: #333;
+      }
+    </style>
   </head>
   
   <body>
@@ -81,6 +97,12 @@ Could parse into the following HTML:
       Hello John Doe, this line only appears
       if the name variable contains a truthy.
     </p>
+    
+    <div>
+      <p>
+        It also works fine with just plain html.
+      </p>
+    </div>
     
     <h2>Here is a list of names of people:</h2>
     <ul>
