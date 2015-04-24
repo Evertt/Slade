@@ -111,8 +111,7 @@ Which will then extend for example `layouts/default.slade` and the paragraph wil
 The following nodes are included:
 
 * Any line starting with a lower case letter, a dot, or a hash, is interpreted as an html tag and will thus be handled by the `TagNode`.
-* `?` is for the `IfNode`, when you only want its children to be displayed if the provided variable returns a truthy.
-* `!` is for the `UnlessNode`, which does pretty much the opposite of the `IfNode`.
+* `?` and `!` are for the `ConditionalNode`, when you want its children to be displayed based on wether a conditional statement returns a truthy (or a falsy in case of the `!`).
 * `>` is for the `ForeachNode`, which iterates over the elements of an iterable. It automatically names the individual items the singular name of the original variable. So if you iterate over the variable called `people`, the individual items will be called `person`. If it does not know the singular version of a variable name, then it just uses the same variable name again.
 * `+` is for the `IncludeNode` and it includes another template into the current template.
 * `=` is for the `VariableNode` and it will insert the value of a variable, encoded by htmlentities. To avoid encoding by htmlentities you can use `==`.
