@@ -6,11 +6,16 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class A {
-    public static $b = 'hi';
+    public $b = 'hi';
 }
 
 class C {
-    public $d = A;
+    public $d;
+
+    public function __construct()
+    {
+        $this->d = new A;
+    }
 }
 
 class ScopeSpec extends ObjectBehavior
