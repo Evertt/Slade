@@ -72,6 +72,8 @@ html
     ul
       > people
         li = person.name
+        
+    + elements.footer
 ```
             
 Could parse into the following HTML:
@@ -110,6 +112,10 @@ Could parse into the following HTML:
       <li>Ron</li>
       <li>Hermione</li>
     </ul>
+    
+    <footer>
+      &copy; Me 2015
+    </footer>
   </body>
 </html>
 ```
