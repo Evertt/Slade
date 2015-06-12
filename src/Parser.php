@@ -1,76 +1,61 @@
-<?php
-
-namespace Slade;
+<?php namespace Slade;
 
 class Parser
 {
-    protected static $nodes = [];
+    public static $templatePaths = [];
 
-    public static function initNodes()
+    public static function make($filename, $data = [])
     {
-        foreach (glob(__DIR__.'/nodes/*?Node.php') as $filename)
-        {
-            $class = 'Slade\Nodes\\'.basename($filename, '.php');
+        $compiled = static::compile($filename);
 
-            $rc = new \ReflectionClass($class);
-
-            preg_match('/@node (.+)/i', $rc->getDocComment(), $m);
-
-            static::$nodes[$m[1]] = $class;
-        }
+        return static::render($compiled, $data);
     }
 
-    public static function parse($template = '', Scope $scope = null, Scope $sections = null)
+    public static function compile($filename)
     {
-        if (!static::$nodes) static::initNodes();
+        $file = static::retrieveFile($filename);
 
-        $scope = $scope ?: new Scope();
+        $hash = "./compiled/$filename." . sha1($file) . '.php';
 
-        $sections = $sections ?: new Scope();
-
-        $blocks = static::getBlocks($template);
-
-        $html = static::parseBlocks($blocks, $scope, $sections);
-
-        return $html;
-    }
-
-    public static function getBlocks($template = '')
-    {
-        $blocks = [];
-        $regex = '/\S[\s\S]*?((\r\n?|\n\r?)+(?=\S)|$)/D';
-        preg_match_all($regex, $template, $matches);
-
-        foreach($matches[0] as $match)
+        if (!file_exists($hash))
         {
-            $blocks[] = new TemplateBlock($match);
+            $template = Template::parseTemplate($file);
+            
+            /*$template = str_replace("?>\n", "?>\n\n", $template);*/
+
+            array_map('unlink', glob("./compiled/$filename.*.php"));
+
+            file_put_contents($hash, $template);
         }
 
-        return $blocks;
+        return $hash;
     }
 
-    protected static function parseBlocks($blocks, Scope $scope, Scope $sections)
+    public static function render($filename, $__data = [])
     {
-        $html = '';
+        extract($__data);
+        $__env = Environment::getInstance();
 
-        foreach ($blocks as $block)
-        {
-            $html .= static::parseBlock($block, $scope, $sections);
-        }
+        ob_start();
+        include $filename;
+        $view = ob_get_clean();
 
-        return $html;
+        //$view = preg_replace('/\n\s*\n\s*\n/', "\n\n", $view);
+
+        return $view;
     }
 
-    protected static function parseBlock($block, Scope $scope, Scope $sections)
+    public static function retrieveFile($filename)
     {
-        foreach (static::$nodes as $pattern => $class)
+        $filename = str_replace('.', '/', $filename);
+        $filename .= '.slade';
+
+        foreach(static::$templatePaths as $path)
         {
-            if (preg_match($pattern, $block->getLine()))
+            if ($file = file_exists("$path/$filename"))
             {
-                return $class::parse($block, $scope, $sections);
+                return file_get_contents("$path/$filename");
             }
         }
-
-        return $block;
     }
 }

@@ -1,5 +1,7 @@
 vendor/*
+compiled/*
 composer.lock
 .idea/*
 node_modules/*
 gulpfile.js
+index.php

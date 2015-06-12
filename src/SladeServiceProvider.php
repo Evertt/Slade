@@ -11,7 +11,7 @@ class SladeServiceProvider extends ServiceProvider {
      */
     public function boot()
     {
-        Slade::$templatePaths = $this->app['config']['view']['paths'];
+        Parser::$templatePaths = $this->app['config']['view']['paths'];
     }
 
     /**

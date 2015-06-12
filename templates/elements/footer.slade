@@ -1,5 +1,0 @@
-ul
-  > persons
-    li
-      strong = person.name
-      em = foo
