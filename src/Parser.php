@@ -3,6 +3,7 @@
 class Parser
 {
     public static $templatePaths = [];
+    public static $compiledPath = '';
 
     public static function make($filename, $data = [])
     {
@@ -15,7 +16,7 @@ class Parser
     {
         $file = static::retrieveFile($filename);
 
-        $hash = "./compiled/$filename." . sha1($file) . '.php';
+        $hash = static::$compiledPath . "/$filename." . sha1($file) . '.php';
 
         if (!file_exists($hash))
         {
@@ -23,7 +24,7 @@ class Parser
             
             /*$template = str_replace("?>\n", "?>\n\n", $template);*/
 
-            array_map('unlink', glob("./compiled/$filename.*.php"));
+            array_map('unlink', glob(static::$compiledPath . "/$filename.*.php"));
 
             file_put_contents($hash, $template);
         }
