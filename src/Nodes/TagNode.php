@@ -7,16 +7,35 @@ use Slade\Parser;
 use Slade\TemplateBlock;
 
 /**
- * @node /^[a-z.#]/
+ * @node /^(?!css:|javascript:)[a-z#.]/
  */
 class TagNode extends Node
 {
-    public static $selfClosingTags = [
+    protected static $selfClosingTags = [
         'area','base','br','col','command','embed','hr','img',
         'input','keygen','link','meta','param','source','track','wbr',
     ];
 
     protected static $defaultTagName = 'div';
+
+    protected static $tokens = [
+        'tagName'           => '[a-z][\w-]*',
+        'id'                => '#[^.\s\/>"\'=]+',
+        'class'             => '\.[^.\s\/>"\'=]+',
+        'attributeName'     => '[^\s\/>"\'=]+',
+        'literalAttribute'  => '"[^"\r\n]+"|\'[^\'\r\n]+\'',
+        'booleanAttribute'  => 'false|true',
+        'variableAttribute' => '[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff.]*',
+        'textContent'       => '(?!==|=).+$',
+        'variableContent'   => '(==|=) *[\w.]+$',
+    ];
+
+    public static function newParsingDraft(TemplateBlock $block, Scope $scope, Scope $sections)
+    {
+        extract(static::$tokens);
+
+
+    }
 
     public static function parse(TemplateBlock $block, Scope $scope, Scope $sections)
     {
@@ -65,11 +84,9 @@ class TagNode extends Node
     {
         preg_match('/^([\w-]+)?(?:#([\w-]+))?(?:\.([\w-.]+))?$/', $tag, $matches);
 
-        list($match, $tagName, $id, $class) = $matches + array_fill(0, 4, '');
+        list(, $tagName, $id, $class) = $matches + array_fill(0, 4, '');
 
-        if (!$tagName) {
-            $tagName = static::$defaultTagName;
-        }
+        if (!$tagName) $tagName = static::$defaultTagName;
 
         $class = str_replace('.', ' ', $class);
 

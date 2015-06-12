@@ -32,10 +32,28 @@ class ScopeSpec extends ObjectBehavior
 
         $this['one.two.d.b']->shouldReturn('hi');
     }
+
+    function it_can_set_a_nested_array_item()
+    {
+        $this['one.two'] = 'three';
+
+        $this['one']->shouldReturn(['two' => 'three']);
+    }
+
+    function it_can_set_a_nested_object_item()
+    {
+        $this->beConstructedWith(['one' => ['two' => new C]]);
+
+        $this['one.two.d.e.f'] = 'bye';
+
+        $this['one.two.d']->shouldHaveType('spec\Slade\A');
+        $this['one.two.d.e']->shouldReturn(['f' => 'bye']);
+    }
 }
 
 class A {
     public $b = 'hi';
+    public $e = [];
 }
 
 class C {

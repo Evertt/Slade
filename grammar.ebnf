@@ -1,0 +1,42 @@
+template = {template block};
+
+template block = code block
+               | tag block
+               | text block
+               | html block
+               | yield block
+               | extend block
+               | section block
+               | include block
+               | comment block
+               | variable block
+               | iteration block
+               | conditional block;
+
+code block              = language name, ':', ([line of code] | [line break] | line break, {indented line of code});
+language name           = 'css' | 'javascript';
+line of code            = { any character }, line break;
+indentend line of code  = space, {space}, line of code;
+
+tag block = tag name,  [tag id],    {tag class}, {attribute}, [tag content], [line break], {indented template block}
+          | tag name,  {tag class}, [tag id],    {attribute}, [tag content], [line break], {indented template block}
+          |             tag id,     {tag class}, {attribute}, [tag content], [line break], {indented template block}
+          | tag class, {tag class}, [tag id],    {attribute}, [tag content], [line break], {indented template block};
+
+name              = letter, {letter | digit | '-', '_'};
+tag name          = name;
+tag id            = '#', name;
+tag class         = '.', name;
+tag content       = variable content | text content;
+variable content  = '=', ['='], variable;
+text content      = !'=' {any character};
+attribute         = attribute name, '=', attribute value;
+attribute value   = string | boolean | variable;
+boolean           = 'false' | 'true';
+
+# the regular expressions are here, because I don't know how to write this in real good enbf:
+
+attribute name  = /[^\s\/>"\'=]+/;
+string          = /"[^"\r\n]"|'[^'\r\n]'/;
+variable        = /[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/;
+any character   = /./;

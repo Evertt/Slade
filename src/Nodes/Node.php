@@ -43,11 +43,11 @@ abstract class Node
         return $node;
     }
 
-    protected static function getAttributes($string, Scope &$scope) {
+    protected static function getAttributes($string, Scope $scope) {
         $array = [];
-        $pattern = '/([^\s\/>"\'=]+)=("[^"]+"|\S+)/';
+        $pattern = '/([^\s\/>"\'=]+)=("[^"]"|\'[^\']\'|[\w.]+)/';
 
-        $callback = function ($attr) use (&$array, &$scope) {
+        $callback = function ($attr) use (&$array, $scope) {
             if ($attr[2] === 'true') {
                 $array[$attr[1]] = true;
                 return $attr[1];
@@ -58,8 +58,8 @@ abstract class Node
                 return '';
             }
 
-            if ($attr[2][0] == '"') {
-                $array[$attr[1]] = trim($attr[2], '"');
+            if (starts_with($attr[2], ['"', "'"])) {
+                $array[$attr[1]] = substr($attr[2], 1, -1);
                 return $attr[0];
             }
 

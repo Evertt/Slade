@@ -24,9 +24,22 @@ class Scope implements \ArrayAccess
         return $val ?: $default;
     }
 
-    public function set($var, $value)
+    public function set($offset, $value)
     {
-        $this->vars[$var] = $value;
+        $vars = &$this->vars;
+        $path = explode('.', $offset);
+
+        foreach($path as $step)
+        {
+            if ($this->check($vars, $step) === null)
+            {
+                $vars[$step] = '';
+            }
+
+            $vars = &$this->check($vars, $step);
+        }
+
+        $vars = $value;
     }
 
     protected function _get($var)
@@ -34,8 +47,10 @@ class Scope implements \ArrayAccess
         $val = $this->vars;
         $path = explode('.', $var);
 
-        foreach ($path as $step) {
-            if (!($val = $this->check($val, $step))) {
+        foreach($path as $step)
+        {
+            if (!($val = $this->check($val, $step)))
+            {
                 return;
             }
         }
@@ -43,19 +58,19 @@ class Scope implements \ArrayAccess
         return $val;
     }
 
-    protected function check($var, $key)
+    protected function &check(&$var, $key)
     {
         $val = null;
 
         if (is_object($var)) {
             if (isset($var->$key)) {
-                $val = $var->$key;
+                $val = &$var->$key;
             }
         }
 
         if (is_array($var)) {
             if (isset($var[$key])) {
-                $val = $var[$key];
+                $val = &$var[$key];
             }
         }
 
@@ -64,9 +79,9 @@ class Scope implements \ArrayAccess
 
     public function offsetSet($offset, $val) {
         if (is_null($offset)) {
-            $this->vars[] = $val;
+            throw new InvalidArgumentException('Offset may not be null');
         } else {
-            $this->vars[$offset] = $val;
+            $this->set($offset, $val);
         }
     }
 
