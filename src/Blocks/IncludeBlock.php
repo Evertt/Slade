@@ -35,8 +35,14 @@ class IncludeBlock
         $content    = static::setContent($content);
         $children   = Template::parse($children);
 
-        return "<?php \$__env->startInclude(); ?>$content$children"
-             . "<?php \$__env->endInclude($view, array_merge(\$__data, $attributes)); ?>";
+        $output  = "<?php ob_start() ?>$content$children";
+        $output .= '<?php $__tmp = ob_get_clean(); ?>';
+        $output .= "<?php extract($attributes); ?>";
+        $output .= '<?php $__d = array_except(get_defined_vars(), array("__data", "__path")) ?>';
+        $output .= '<?= $__env->make("'.$view.'", $__d)->render() ?: $__tmp ?>';
+        $output .= '<?php unset($__tmp, $__d); ?>';
+
+        return $output;
     }
 
     protected static function getView(&$block)

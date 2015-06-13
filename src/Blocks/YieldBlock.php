@@ -36,8 +36,12 @@ class YieldBlock
         $content  = static::setContent($content);
         $children = Template::parse($children);
 
-        return "<?php \$__env->startYield(); ?>$content$children"
-             . "<?php \$__env->endYield(\"$section\"); ?>";
+        $output  = "<?php ob_start() ?>$content$children";
+        $output .= '<?php $__tmp = ob_get_clean(); ?>';
+        $output .= '<?= $__env->yieldContent("'.$section.'") ?: $__tmp ?>';
+        $output .= '<?php unset($__tmp); ?>';
+
+        return $output;
     }
 
     protected static function getSection(&$block)

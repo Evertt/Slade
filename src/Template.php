@@ -49,8 +49,23 @@ class Template
 
     static function tidy($html)
     {
-        $html = preg_replace(['~<style>|(<script>(?!\s*</script>))~', '~</style>|((<script>\s*\K)</script>)~'], ['$0<![CDATA[', ']]>$0'], $html);
-        $tidy = tidy_parse_string($html, ['indent'=>true,'input-xml'=>true,'escape-cdata'=>true,], 'utf8');
+        $needles = [
+            '~<style>*?>|(<script.*?>(?!\s*</script>))~',
+            '~</style>|((<script>\s*\K)</script>)~'
+        ];
+
+        $replacements = ['$0<![CDATA[', ']]>$0'];
+
+        $html = preg_replace($needles, $replacements, $html);
+
+        $settings = [
+            'indent' => true,
+            'input-xml' => true,
+            'escape-cdata' => true
+        ];
+
+        $tidy = tidy_parse_string($html, $settings, 'utf8');
+        
         return  preg_replace('~(</.+>|<.+/>|-->)(?=\n *<\w+)~m', "\$1\n", $tidy);
     }
 }

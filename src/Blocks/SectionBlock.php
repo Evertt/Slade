@@ -37,8 +37,11 @@ class SectionBlock
         $content  = static::setContent($content);
         $children = Template::parse($children);
 
-        return "<?php \$__env->startSection(); ?>$content$children"
-             . "<?php \$__env->endSection(\"$section\"); ?>";
+        $output  = "<?php \$__env->startSection(\"$section\"); ?>";
+        $output .= $content . $children;
+        $output .= '<?php $__env->stopSection(); ?>';;
+
+        return $output;
     }
 
     protected static function getSection(&$block)

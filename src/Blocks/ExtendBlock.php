@@ -33,8 +33,13 @@ class ExtendBlock
         $attributes = static::setAttributes($attributes);
         $children   = Template::parse($children);
 
-        return "<?php ob_start() ?>$children"
-             . "<?php \$__env->endExtension($view, array_merge(\$__data, $attributes)); ?>";
+        $output  = $children;
+        $output .= "<?php extract($attributes); ?>";
+        $output .= '<?php $__d = array_except(get_defined_vars(), array("__data", "__path")) ?>';
+        $output .= "<?= \$__env->make(\"$view\", \$__d)->render(); ?>";
+        $output .= '<?php unset($__d) ?>';
+
+        return $output;
     }
 
     protected static function getView(&$block)
