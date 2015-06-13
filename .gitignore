@@ -2,6 +2,7 @@ vendor/*
 templates/*
 compiled/*
 composer.lock
+index.php
 .idea/*
 node_modules/*
 gulpfile.js

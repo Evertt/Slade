@@ -18,8 +18,8 @@ class Slade
 
     static function tidy($html)
     {
-        $html = preg_replace(['~<style>|<script>~', '~</style>|</script>~'], ['$0<![CDATA[', ']]>$0'], $html);
-        $tidy = tidy_parse_string($html, ['indent'=>true,'input-xml'=>true,'escape-cdata'=>true,], 'utf8');
+        $html = preg_replace(['~<style.*?>|<script.*?>~', '~</style>|</script>~'], ['$0<![CDATA[', ']]>$0'], $html);
+        $tidy = tidy_parse_string($html, ['indent'=>1,'input-xml'=>1,'escape-cdata'=>1], 'utf8');
         return  preg_replace('~(</\w+>|<.+/>|-->)(?=\n *<\w+)~m', "\$1\n", $tidy);
     }
 }
