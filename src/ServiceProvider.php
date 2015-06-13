@@ -38,6 +38,8 @@ class ServiceProvider extends BaseServiceProvider {
         $this->registerSladeEngine($resolver);
 
         $this->app['view']->addExtension('slade.php', 'slade');
+
+        $this->app['view']->share('__fn', function($v){return $v;});
     }
 
     /**

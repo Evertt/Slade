@@ -1,10 +1,6 @@
 # Slade
 A PHP templating engine inspired by both Ruby Slim and Laravel Blade
 
-# Warning
-
-This README is **VERY** out of date. Just about everything down here isn't true anymore. I changed the engine to rely heavily on Laravel and work very well together with Laravel. I need to update this readme and the wiki, but I don't feel like it right now. If anyone would like to update the documentation then feel free to send me a pull-request.
-
 # Disclaimer
 
 I want to let you know that I don't believe this code is production ready yet. It's missing features to make it really powerful and although I've written tests I'm sure there are probably still important bugs I've missed. What I would really like is if you'd like to test it, look at the code and send me suggestions and pull-requests to make it better.
@@ -15,29 +11,11 @@ Use
 
     composer require evertt/slade
 
-to include this package into your project. Note, this package requires PHP 5.5. If you want to use it with Laravel, then in `config/app.php` add `'Slade\SladeServiceProvider'` to your list of service providers. If you want to use this package independently from Laravel, then just make sure you set `Slade::$templatePaths` to an array of the paths to the root folder of your templates.
-
-So if you set:
-
-```php
-Slade::$templatePaths = ['/my-project/views', '/my-project/some-vendor/views'];
-```
-
-And you ask Slade to parse the view `users.index` then it will first look for the file `/my-project/views/users/index.slade` and if that doesn't exist it will look for `/my-project/some-vendor/views/users/index.slade`.
+to include this package into your Laravel project. Then in `config/app.php` add `Slade\ServiceProvider::class` to your list of service providers.
 
 ## Usage
 
-To use this engine in your controller for example, simply put
-
-```php
-use Slade\Slade;
-```
-
-at the top of your controller file and then in any action use:
-
-```php
-return Slade::parse('users.index', compact('user'));
-```
+To use this engine all you need to do is create template files that end in `.slade.php` instead of `.blade.php`.
 
 
 ## Example
@@ -59,12 +37,12 @@ html
   body
     h1 My first Slade template!
     
-    ? name
+    ? $name
       p
-        | Hello {{name}}, this line only appears
+        | Hello $name, this line only appears
         | if the name variable contains a truthy.
     
-    ! name
+    ! $name
       p There is no name.
       
     div
@@ -74,8 +52,8 @@ html
       
     h2 Here is a list of names of people:
     ul
-      > people
-        li = person.name
+      > $people
+        li = $person->name
         
     + elements.footer
 ```
@@ -132,25 +110,27 @@ _ layouts.default
     p This paragraph will be assigned to the 'content' section
 ```
 
-Which will then extend for example `layouts/default.slade` and the paragraph will appear wherever the following line is included in `layouts/default.slade`:
+Which will then extend for example `layouts/default.slade.php` and the paragraph will appear wherever the following line is included in `layouts/default.slade.php`:
 
 ```slim
 - content
 ```
 
-## Nodes
+## Inserting variables
 
-The following nodes are included:
+As you saw, you can insert variables in a few ways. I want to show a few more.
 
-* Any line starting with a lower case letter, a dot, or a hash, is interpreted as an html tag and will thus be handled by the `TagNode`.
-* `?` and `!` are for the `ConditionalNode`, when you want its children to be displayed based on wether a conditional statement returns a truthy (or a falsy in case of the `!`).
-* `>` is for the `ForeachNode`, which iterates over the elements of an iterable. It automatically names the individual items the singular name of the original variable. So if you iterate over the variable called `people`, the individual items will be called `person`. If it does not know the singular version of a variable name, then it just uses the same variable name again.
-* `+` is for the `IncludeNode` and it includes another template into the current template.
-* `=` is for the `VariableNode` and it will insert the value of a variable, encoded by htmlentities. To avoid encoding by htmlentities you can use `==`.
-* `|` is for the `TextNode` and it will just print text, encoded with htmlentities.
-* `<` is for the `HtmlNode` and it will print HTML as is, only with variables replaced by their values.
-* `_` is for the `ExtendNode`. With this a view can extend a master view.
-* `-` is for the `YieldNode` and it yields a predefined section.
-* `@` is for the `SectionNode`. It assigns its children to a section.
+```slim
+p
+  | So this is a block of text in which you can put variables.
+    You can do that in the following manner:
+    $var or {$var} or ${var}. The {} syntax only works if
+    there's no whitespace after the { and before the } though.
+    And finally you can also execute function calls like so:
+    {implode(' ', $var)}. Again, make sure there's no whitespace
+    immediately following the { or immediately preceding the }.
+```
 
-Finally you can write `css:` and `javascript:` to insert css and javascript code.
+## More
+
+There's a lot more you can do. I intend to write a complete wiki about it soon. The current wiki is terribly out of date. If you'd like to contribute to the docs or the code or suggest any features then please file an issue or submit a pull-request. That would be the greatest gift for me.
