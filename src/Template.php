@@ -8,6 +8,11 @@ class Template
         $tree     = static::lex($template);
         $html     = static::parse($tree);
 
+        if (app('config')->get('app.debug'))
+        {
+            $html = static::tidy($html);
+        }
+
         return $html;
     }
 
@@ -40,5 +45,12 @@ class Template
         }
 
         return $html;
+    }
+
+    static function tidy($html)
+    {
+        $html = preg_replace(['~<style>|(<script>(?!\s*</script>))~', '~</style>|((<script>\s*\K)</script>)~'], ['$0<![CDATA[', ']]>$0'], $html);
+        $tidy = tidy_parse_string($html, ['indent'=>true,'input-xml'=>true,'escape-cdata'=>true,], 'utf8');
+        return  preg_replace('~(</.+>|<.+/>|-->)(?=\n *<\w+)~m', "\$1\n", $tidy);
     }
 }
