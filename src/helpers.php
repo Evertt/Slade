@@ -32,48 +32,32 @@ if ( ! function_exists('outdent'))
     }
 }
 
-if ( ! function_exists('start'))
+if ( ! function_exists('measure_indentation'))
 {
     /**
-     * Start a string with a specific token, removing any excess tokens.
-     *
-     * @param  string $str
-     * @param  string $token
-     * @return string
-     */
-    function start($str, $token)
-    {
-        return $token . ltrim($str, $token);
-    }
-}
-
-if ( ! function_exists('finish'))
-{
-    /**
-     * Finish a string with a specific token, removing any excess tokens.
-     *
-     * @param  string $str
-     * @param  string $token
-     * @return string
-     */
-    function finish($str, $token)
-    {
-        return rtrim($str, $token) . $token;
-    }
-}
-
-if ( ! function_exists('repeat'))
-{
-    /**
-     * Repeat a string a specific number of times.
+     * Measure indentation
      *
      * @param  string  $str
-     * @param  integer $amount
+     * @return integer
+     */
+    function measure_indentation($str)
+    {
+        return strlen($str) - strlen(ltrim($str, ' '));
+    }
+}
+
+if ( ! function_exists('consume'))
+{
+    /**
+     * Delete match from the beginning of the string
+     *
+     * @param  string  $str
+     * @param  integer $depth
      * @return string
      */
-    function repeat($str, $amount)
+    function consume($haystack, $match)
     {
-        return str_repeat($str, $amount);
+        return ltrim(substr($haystack, strlen($match)), ' ');
     }
 }
 
@@ -90,6 +74,26 @@ if ( ! function_exists('surround'))
     function surround($str, $token)
     {
         return $token . trim($str, $token) . $token;
+    }
+}
+
+if ( ! function_exists('match'))
+{
+    /**
+     * Match token and delete it
+     *
+     * @param  string  $token
+     * @param  string  $str
+     * @return string|void
+     */
+    function match($token, &$str)
+    {
+        if (preg_match($token, $str, $match))
+        {
+            $str = consume($str, $match[0]);
+
+            return $match;
+        }
     }
 }
 
@@ -110,6 +114,43 @@ if ( ! function_exists('starts_with'))
         }
 
         return false;
+    }
+}
+
+function count_new_lines($str)
+{
+    $newLinesAtStart = $newLinesAtEnd = 0;
+
+    preg_match_all('/(\r\n?|\n\r?)+$/', $str, $newLines);
+
+    if ($newLines[0])
+    {
+        $newLinesAtEnd = strlen($newLines[0][0]) / strlen($newLines[1][0]);
+    }
+
+    $str = preg_replace('/(\r\n?|\n\r?)+$/', '', $str);
+    preg_match_all('/^(\r\n?|\n\r?)+/', $str, $newLines);
+
+    if ($newLines[0])
+    {
+        $newLinesAtStart = strlen($newLines[0][0]) / strlen($newLines[1][0]);
+    }
+
+    return [$newLinesAtStart, $newLinesAtEnd];
+}
+
+if ( ! function_exists('repeat'))
+{
+    /**
+     * Repeat a string a specific number of times.
+     *
+     * @param  string  $str
+     * @param  integer $amount
+     * @return string
+     */
+    function repeat($str, $amount)
+    {
+        return str_repeat($str, $amount);
     }
 }
 
@@ -165,5 +206,38 @@ if ( ! function_exists('singular'))
         $singular = Inflector::singularize($value);
 
         return match_case($singular, $value);
+    }
+}
+
+if ( ! function_exists('dedent'))
+{
+    /**
+     * Dedent template.
+     *
+     * @param  string  $template
+     * @return string
+     */
+
+    function dedent($template)
+    {
+        $template = trim($template, "\r\n");
+
+        $indentation = measure_indentation($template);
+        
+        return outdent($template, $indentation);
+    }
+}
+
+if ( ! function_exists('replaceFunc'))
+{
+    function replaceFunc($format, $html)
+    {
+        $pattern = '/(?<!\$|\\\){(?!\s|\$|\\\)(.+?)(?<!\s)}/';
+
+        $html = addcslashes($html, '"');
+
+        $html = preg_replace($pattern, '{$__fn($1)}', $html);
+
+        return sprintf($format, $html);
     }
 }

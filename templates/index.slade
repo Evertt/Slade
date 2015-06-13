@@ -1,3 +1,0 @@
-_ layout
-  @ content
-    + elements.footer persons=items foo="cool"

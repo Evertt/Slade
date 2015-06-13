@@ -1,4 +1,4 @@
-template = {template block};
+template = {template block, {line break}};
 
 template block = code block
                | tag block
@@ -13,15 +13,14 @@ template block = code block
                | iteration block
                | conditional block;
 
-code block              = language name, ':', ([line of code] | [line break] | line break, {indented line of code});
+code block              = language name, ':', [line of code], [line break, indent, {line of code}];
 language name           = 'css' | 'javascript';
 line of code            = { any character }, line break;
-indentend line of code  = space, {space}, line of code;
 
-tag block = tag name,  [tag id],    {tag class}, {attribute}, [tag content], [line break], {indented template block}
-          | tag name,  {tag class}, [tag id],    {attribute}, [tag content], [line break], {indented template block}
-          |             tag id,     {tag class}, {attribute}, [tag content], [line break], {indented template block}
-          | tag class, {tag class}, [tag id],    {attribute}, [tag content], [line break], {indented template block};
+tag block = tag identifier, {attribute}, [tag content], [line break, indent, {template block}];
+
+tag identifier = [tag name], [tag id],    {tag class}
+               | [tag name], {tag class}, [tag id];
 
 name              = letter, {letter | digit | '-', '_'};
 tag name          = name;
@@ -29,14 +28,19 @@ tag id            = '#', name;
 tag class         = '.', name;
 tag content       = variable content | text content;
 variable content  = '=', ['='], variable;
-text content      = !'=' {any character};
+text content      = !'=', {text incl vars};
+text incl vars    = {{any character}, {variable | ('{', expression, '}')}};
 attribute         = attribute name, '=', attribute value;
 attribute value   = string | boolean | variable;
 boolean           = 'false' | 'true';
 
+
+text block = '|', {text incl vars}, [line break, indent, {text incl vars}];
+
+
 # the regular expressions are here, because I don't know how to write this in real good enbf:
 
 attribute name  = /[^\s\/>"\'=]+/;
-string          = /"[^"\r\n]"|'[^'\r\n]'/;
+string          = /"[^"\n]"|'[^'\n]'/;
 variable        = /[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/;
 any character   = /./;
