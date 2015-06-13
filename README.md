@@ -22,7 +22,7 @@ To use this engine all you need to do is create template files that end in `.sla
 
 The following template
 
-```slim
+```
 doctype html
 html
   head
@@ -104,7 +104,7 @@ Could parse into the following HTML:
     
 You can also extend another template this way:
 
-```slim
+```
 _ layouts.default
   @ content
     p This paragraph will be assigned to the 'content' section
@@ -112,7 +112,7 @@ _ layouts.default
 
 Which will then extend for example `layouts/default.slade.php` and the paragraph will appear wherever the following line is included in `layouts/default.slade.php`:
 
-```slim
+```
 - content
 ```
 
@@ -120,7 +120,7 @@ Which will then extend for example `layouts/default.slade.php` and the paragraph
 
 As you saw, you can insert variables in a few ways. I want to show a few more.
 
-```slim
+```
 p
   | So this is a block of text in which you can put variables.
     You can do that in the following manner:
@@ -133,4 +133,4 @@ p
 
 ## More
 
-There's a lot more you can do. I intend to write a complete wiki about it soon. The current wiki is terribly out of date. If you'd like to contribute to the docs or the code or suggest any features then please file an issue or submit a pull-request. That would be the greatest gift for me.
+There's a lot more you can do. I intend to write a more complete wiki about it soon. If you'd like to contribute to the docs or the code or suggest any features then please file an issue or submit a pull-request. That would be the greatest gift for me.
