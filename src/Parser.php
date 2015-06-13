@@ -18,7 +18,7 @@ class Parser
 
         $hash = static::$compiledPath . "/$filename." . sha1($file) . '.php';
 
-        if (!file_exists($hash) or 1)
+        if (!file_exists($hash))
         {
             $template = Template::compile($file);
 
