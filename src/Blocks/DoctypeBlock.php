@@ -9,12 +9,18 @@ class DoctypeBlock
         'doctype' => '/^doctype (\w*)/'
     ];
 
-    static function makeTree($block)
+    static function lex($block)
     {
-        $doctype    = static::getDoctype($block);
-        $newLines   = count_new_lines($block);
+        $doctype = static::getDoctype($block);
 
-        return compact('doctype', 'newLines');
+        return compact('doctype');
+    }
+
+    static function parse($tree)
+    {
+        extract($tree);
+
+        return static::parseDoctype($doctype);
     }
 
     protected static function getDoctype($block)
@@ -24,13 +30,6 @@ class DoctypeBlock
         $token = match($doctype, $block);
         
         return $token ? $token[1] : null;
-    }
-
-    static function parseTree($tree)
-    {
-        extract($tree);
-
-        return static::parseDoctype($doctype) . repeat("\n", $newLines[1]);
     }
 
     protected static function parseDoctype($doc)

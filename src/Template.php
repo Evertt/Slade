@@ -2,11 +2,11 @@
 
 class Template
 {
-    static function parseTemplate($template)
+    static function compile($template)
     {
         $template = static::normalizeNewlines($template);
-        $tree     = static::makeTree($template);
-        $html     = static::parseTree($tree);
+        $tree     = static::lex($template);
+        $html     = static::parse($tree);
 
         return $html;
     }
@@ -16,27 +16,27 @@ class Template
         return preg_replace('/\r\n?|\n\r?/', "\n", $template);
     }
 
-    static function makeTree($template)
+    static function lex($template)
     {
         $blocks = [];
         $regex = '/\S[\s\S]*?(\n+(?=\S)|$)/D';
-        preg_match_all($regex, $template, $matches);
+        preg_match_all($regex, dedent($template), $matches);
 
         foreach($matches[0] as $match)
         {
-            $blocks[] = Block::makeTree($match);
+            $blocks[] = Block::lex($match);
         }
 
         return $blocks;
     }
 
-    static function parseTree($tree)
+    static function parse($tree)
     {
         $html = '';
 
         foreach($tree as $block)
         {
-            $html .= Block::parseBlock($block);
+            $html .= Block::parse($block);
         }
 
         return $html;

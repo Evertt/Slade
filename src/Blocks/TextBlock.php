@@ -5,40 +5,19 @@
  */
 class TextBlock
 {
-    protected static $tokens = [
-        'func' => '/(?<!\$|\\\){(?!\s|\$|\\\)(.+?)(?<!\s)}/',
-    ];
-
-    static function makeTree($block)
+    static function lex($block)
     {
-        $newLines = count_new_lines($block);
-        $text     = static::getText($block);
+        $text = ltrim($block, '| ');
 
-        return compact('text', 'newLines');
+        return compact('text');
     }
 
-    protected static function getText($block)
-    {
-        $block = ltrim($block, '| ');
-
-        return rtrim($block, "\n");
-    }
-
-    static function parseTree($tree)
+    static function parse($tree)
     {
         extract($tree);
 
         $text = addcslashes($text, '"');
 
-        $php  = '<?= e("' . static::replaceFunc($text) . '") ?>';
-
-        return $php . repeat("\n", $newLines[1]);
-    }
-
-    static function replaceFunc($text)
-    {
-        extract(static::$tokens);
-
-        return preg_replace($func, '{$_fn($1)}', $text);
+        return replaceFunc('<?= e("%s") ?>', $text);
     }
 }

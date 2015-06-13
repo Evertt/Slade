@@ -12,25 +12,29 @@ class ExtendBlock
         'attribute'   => '/^([^\s\/>"\'=]+)=("[^"\r\n\f\v]+"|\'[^\'\r\n\f\v]+\'|\S+)/'
     ];
 
-    static function makeTree($block)
+    static function lex($block)
     {
-        $view        = static::getView($block);
-        $attributes  = static::getAttributes($block);
-
-        $newLines    = count_new_lines($block);
-        $block       = trim($block, "\r\n");
-        $indentation = measure_indentation($block);
-        $block       = outdent($block, $indentation);
-
-        $children    = Template::makeTree($block);
+        $view       = static::getView($block);
+        $attributes = static::getAttributes($block);
+        $children   = Template::lex($block);
 
         return compact(
             'view',
             'attributes',
-            'children',
-            'indentation',
-            'newLines'
+            'children'
         );
+    }
+
+    static function parse($tree)
+    {
+        extract($tree);
+
+        $view       = addcslashes($view, '"');
+        $attributes = static::setAttributes($attributes);
+        $children   = Template::parse($children);
+
+        return "<?php ob_start() ?>$children"
+             . "<?php \$__env->endExtension($view, array_merge(\$__data, $attributes)); ?>";
     }
 
     protected static function getView(&$block)
@@ -53,30 +57,6 @@ class ExtendBlock
         }
 
         return $attributes;
-    }
-
-    static function parseTree($tree)
-    {
-        extract($tree);
-
-        $view = addcslashes($view, '"');
-
-        $attributes = static::setAttributes($attributes);
-
-        $children = Template::parseTree($children);
-
-        if ($children)
-        {
-            $children = indent($children, $indentation) . "\n";
-        }
-
-        $result = "<?php \$__env->startExtension(); ?>"
-                . repeat("\n", $newLines[0])
-                . $children
-                . "<?php \$__env->endExtension($view, array_merge(\$__data, $attributes)); ?>"
-                . repeat("\n", $newLines[1]);
-
-        return $result;
     }
 
     protected static function setAttributes($attributes)

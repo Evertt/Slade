@@ -1,4 +1,5 @@
 vendor/*
+templates/*
 compiled/*
 composer.lock
 .idea/*

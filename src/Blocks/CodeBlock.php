@@ -5,41 +5,23 @@
  */
 class CodeBlock
 {
-    protected static $tokens = [
-        'func' => '/(?<!\$|\\\){(?!\s|\$|\\\)(.+?)(?<!\s)}/',
-    ];
-
-    static function makeTree($block)
+    static function lex($block)
     {
-        $lang     = strtok($block, ':');
-        $block    = substr($block, strlen($lang) + 1);
-        $newLines = count_new_lines($block);
-        $code     = trim($block, "\n");
+        $lang  = strtok($block, ':');
+        $block = substr($block, strlen($lang) + 1);
+        $code  = trim($block, "\n");
 
-        return compact('lang', 'code', 'newLines');
+        return compact('lang', 'code');
     }
 
-    static function parseTree($tree)
+    static function parse($tree)
     {
         extract($tree);
 
         $code = addcslashes($code, '"');
-
-        $code = '<?= "' . static::replaceFunc($code) . '" ?>';
-
+        $code = replaceFunc('<?= "%s" ?>', $code);
         $lang = $lang == 'js' ? 'script' : 'style';
 
-        $code = "<$lang>" . repeat("\n", $newLines[0])
-              . $code . "\n</$lang>"
-              . repeat("\n", $newLines[1]);
-
-        return $code;
-    }
-
-    static function replaceFunc($html)
-    {
-        extract(static::$tokens);
-
-        return preg_replace($func, '{$_fn($1)}', $html);
+        return "<$lang>\n$code\n\n</$lang>";
     }
 }

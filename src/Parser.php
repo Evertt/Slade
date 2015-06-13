@@ -18,11 +18,9 @@ class Parser
 
         $hash = static::$compiledPath . "/$filename." . sha1($file) . '.php';
 
-        if (!file_exists($hash))
+        if (!file_exists($hash) or 1)
         {
-            $template = Template::parseTemplate($file);
-            
-            /*$template = str_replace("?>\n", "?>\n\n", $template);*/
+            $template = Template::compile($file);
 
             array_map('unlink', glob(static::$compiledPath . "/$filename.*.php"));
 
@@ -35,13 +33,12 @@ class Parser
     public static function render($filename, $__data = [])
     {
         extract($__data);
+        $__fn  = function($v) {return $v;};
         $__env = Environment::getInstance();
 
         ob_start();
         include $filename;
         $view = ob_get_clean();
-
-        //$view = preg_replace('/\n\s*\n\s*\n/', "\n\n", $view);
 
         return $view;
     }

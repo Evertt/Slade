@@ -208,3 +208,36 @@ if ( ! function_exists('singular'))
         return match_case($singular, $value);
     }
 }
+
+if ( ! function_exists('dedent'))
+{
+    /**
+     * Dedent template.
+     *
+     * @param  string  $template
+     * @return string
+     */
+
+    function dedent($template)
+    {
+        $template = trim($template, "\r\n");
+
+        $indentation = measure_indentation($template);
+        
+        return outdent($template, $indentation);
+    }
+}
+
+if ( ! function_exists('replaceFunc'))
+{
+    function replaceFunc($format, $html)
+    {
+        $pattern = '/(?<!\$|\\\){(?!\s|\$|\\\)(.+?)(?<!\s)}/';
+
+        $html = addcslashes($html, '"');
+
+        $html = preg_replace($pattern, '{$__fn($1)}', $html);
+
+        return sprintf($format, $html);
+    }
+}

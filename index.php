@@ -1,4 +1,4 @@
-<?php
+<?php //phpinfo();die;
 
 require_once('vendor/autoload.php');
 
@@ -9,4 +9,6 @@ $name = 'Evert';
 $age = 24;
 $foods = ['salmon', 'lasagne', 'meat'];
 
-echo Slade\Parser::make('test.index', compact('name','age','foods'));
+$html = Slade\Slade::make('test.index', compact('name','age','foods'));
+
+echo $html;

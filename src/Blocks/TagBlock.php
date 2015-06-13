@@ -25,31 +25,23 @@ class TagBlock
         'input','keygen','link','meta','param','source','track','wbr',
     ];
 
-    static function makeTree($block)
+    static function lex($block)
     {
-        $tagName        = static::getTagName($block) ?: static::DEFAULT_TAG_NAME;
-        $identifiers    = static::getIdentifiers($block);
-        $attributes     = static::getAttributes($block, $identifiers);
-        $content        = static::getContent($block);
-
-        $newLines       = count_new_lines($block);
-        $block          = trim($block, "\n");
-        $indentation    = measure_indentation($block);
-        $block          = outdent($block, $indentation);
-
-        $children       = Template::makeTree($block);
+        $tagName     = static::getTagName($block) ?: static::DEFAULT_TAG_NAME;
+        $identifiers = static::getIdentifiers($block);
+        $attributes  = static::getAttributes($block, $identifiers);
+        $content     = static::getContent($block);
+        $children    = Template::lex($block);
 
         return compact(
                 'tagName',
                 'attributes',
                 'content',
-                'children',
-                'indentation',
-                'newLines'
+                'children'
             );
     }
 
-    static function parseTree($tree)
+    static function parse($tree)
     {
         extract($tree);
 
@@ -57,23 +49,14 @@ class TagBlock
 
         $content = static::setContent($content);
 
-        $children = Template::parseTree($children);
+        $children = Template::parse($children);
 
         if (static::isSelfClosingTag($tagName))
         {
-            return "<$tagName$attributes>" . repeat("\n", $newLines[1]);
+            return "<$tagName$attributes />";
         }
 
-        if ($children)
-        {
-            $children = indent($children, $indentation) . "\n";
-        }
-
-        $tag = "<$tagName$attributes>$content" . repeat("\n", $newLines[0])
-             . $children
-             . "</$tagName>" . repeat("\n", $newLines[1]);
-
-        return $tag;
+        return "<$tagName$attributes>$content$children</$tagName>";;
     }
 
     protected static function setAttributes($attributes)
@@ -115,7 +98,7 @@ class TagBlock
 
     protected static function setContent($content)
     {
-        return is_array($content) ? Block::parseBlock($content) : $content;
+        return is_array($content) ? Block::parse($content) : $content;
     }
 
     protected static function getTagName(&$block)
@@ -180,22 +163,22 @@ class TagBlock
 
         if ($token = match($variableContent, $block))
         {
-            return Block::makeTree($token[0]);
+            return Block::lex($token[0]);
         }
 
         if ($token = match($nodeContent, $block))
         {
-            return Block::makeTree($token[1]);
+            return Block::lex($token[1]);
         }
 
         if ($token = match($yieldContent, $block))
         {
-            return Block::makeTree($token[0]);
+            return Block::lex($token[0]);
         }
 
         if ($token = match($textContent, $block))
         {
-            return Block::makeTree("|$token[0]");
+            return Block::lex("|$token[0]");
         }
     }
 

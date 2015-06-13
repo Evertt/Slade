@@ -14,23 +14,17 @@ class ConditionalBlock
         'node'      => '/^: *([\s\S]*?)(?=(\n)*$)/D'
     ];
 
-    static function makeTree($block)
+    static function lex($block)
     {
         extract(static::getTokens($block));
 
-        $node         = Block::makeTree($node);
+        $node     = Block::lex($node);
+        $children = Template::lex($block);
 
-        $newLines     = count_new_lines($block);
-        $block        = trim($block, "\n");
-        $indentation  = measure_indentation($block);
-        $block        = outdent($block, $indentation);
-
-        $children     = Template::makeTree($block);
-
-        return compact('bool', 'statement', 'node', 'children', 'newLines');
+        return compact('bool', 'statement', 'node', 'children');
     }
 
-    static function parseTree($tree)
+    static function parse($tree)
     {
         extract($tree);
 
@@ -39,22 +33,10 @@ class ConditionalBlock
             $statement = "! ( $statement )";
         }
 
-        $statement = "<?php if ( $statement ): ?>";
-        $node      = Block::parseBlock($node);
-        $children  = Template::parseTree($children);
+        $node      = Block::parse($node);
+        $children  = Template::parse($children);
 
-        if ($children)
-        {
-            $children .= "\n";
-        }
-
-        $result = $statement . $node
-                . repeat("\n", $newLines[0])
-                . $children
-                . '<?php endif; ?>'
-                . repeat("\n", $newLines[1]);
-
-        return $result;
+        return "<?php if ($statement): ?>$node$children<?php endif; ?>";
     }
 
     protected static function getTokens(&$block)

@@ -5,7 +5,7 @@
  */
 class CommentBlock
 {
-    static function makeTree($block)
+    static function lex($block)
     {
         $tree = [];
 
@@ -13,36 +13,25 @@ class CommentBlock
         {
             $block    = substr($block, 2);
             $line     = static::getFirstLine($block);
-            $newLines = count_new_lines($block);
-            $block    = trim($block, "\n");
-            $tree     = compact('line', 'block', 'newLines');
+            $block    = trim($block, "\n") . ' ';
+            $tree     = compact('line', 'block');
         }
 
         return $tree;
     }
 
-    static function getFirstLine(&$block)
+    static function parse($tree)
     {
-        if ($token = match('/^.*/', $block))
+        if (!extract($tree)) return;
+
+        return "<!--$line$block-->";
+    }
+
+    protected static function getFirstLine(&$block)
+    {
+        if ($token = match('/^[\s\S]*?\n/', $block))
         {
             return $token[0];
         }
-    }
-
-    static function parseTree($tree)
-    {
-        if (!extract($tree))
-        {
-            return;
-        }
-
-        $block .= $block ? "\n" : ' ';
-
-        $comment = '<!--' . $line
-                 . repeat("\n", $newLines[0])
-                 . $block . '-->'
-                 . repeat("\n", $newLines[1]);
-
-        return $comment;
     }
 }

@@ -14,37 +14,17 @@ class IterationBlock
         'node'       => '/^: *([\s\S]*?)(?=\n*$)/D'
     ];
 
-    static function makeTree($block)
+    static function lex($block)
     {
         extract(static::getTokens($block));
 
-        $node         = Block::makeTree($node);
+        $node     = Block::lex($node);
+        $children = Template::lex($block);
 
-        $newLines     = count_new_lines($block);
-        $block        = trim($block, "\n");
-        $indentation  = measure_indentation($block);
-        $block        = outdent($block, $indentation);
-
-        $children     = Template::makeTree($block);
-
-        return compact('iterable', 'individual', 'node', 'children', 'newLines');
+        return compact('iterable', 'individual', 'node', 'children');
     }
 
-    protected static function getTokens(&$block)
-    {
-        $tokens = [];
-
-        foreach(static::$tokens as $name => $pattern)
-        {
-            $token = match($pattern, $block);
-            
-            $tokens[$name] = $token ? $token[1] : null;
-        }
-
-        return $tokens;
-    }
-
-    static function parseTree($tree)
+    static function parse($tree)
     {
         extract($tree);
 
@@ -62,20 +42,24 @@ class IterationBlock
         }
 
         $opening  = "<?php foreach($iterable as \$i => $individual): ?>";
-
-        $node     = Block::parseBlock($node);
-
-        $children = Template::parseTree($children);
-
-        if ($children)
-        {
-            $children .= "\n";
-        }
-
+        $node     = Block::parse($node);
+        $children = Template::parse($children);
         $closing  = "<?php endforeach; ?>";
 
-        return $opening  . $node . repeat("\n", $newLines[0]) .
-               $children .
-               $closing  . repeat("\n", $newLines[1]);
+        return $opening . $node . $children . $closing;
+    }
+
+    protected static function getTokens(&$block)
+    {
+        $tokens = [];
+
+        foreach(static::$tokens as $name => $pattern)
+        {
+            $token = match($pattern, $block);
+            
+            $tokens[$name] = $token ? $token[1] : null;
+        }
+
+        return $tokens;
     }
 }

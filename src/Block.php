@@ -18,7 +18,7 @@ class Block
         }
     }
 
-    static function makeTree($templateBlock)
+    static function lex($templateBlock)
     {
         if (!static::$blocks) static::initBlocks();
 
@@ -28,17 +28,17 @@ class Block
         {
             if (preg_match($token, $templateBlock))
             {
-                return [$block => $block::makeTree($templateBlock)];
+                return [$block => $block::lex($templateBlock)];
             }
         }
     }
 
-    static function parseBlock($treeBlock)
+    static function parse($treeBlock)
     {
         if (empty($treeBlock)) return;
 
         $blockParser = key($treeBlock);
 
-        return $blockParser::parseTree(current($treeBlock));
+        return $blockParser::parse(current($treeBlock));
     }
 }
