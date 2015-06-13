@@ -1,6 +1,10 @@
 # Slade
 A PHP templating engine inspired by both Ruby Slim and Laravel Blade
 
+# Warning
+
+This README is **VERY** out of date. Just about everything down here isn't true anymore. I changed the engine to rely heavily on Laravel and work very well together with Laravel. I need to update this readme and the wiki, but I don't feel like it right now. If anyone would like to update the documentation then feel free to send me a pull-request.
+
 # Disclaimer
 
 I want to let you know that I don't believe this code is production ready yet. It's missing features to make it really powerful and although I've written tests I'm sure there are probably still important bugs I've missed. What I would really like is if you'd like to test it, look at the code and send me suggestions and pull-requests to make it better.
