@@ -64,8 +64,10 @@ class Template
             'escape-cdata' => true
         ];
 
-        $tidy = tidy_parse_string($html, $settings, 'utf8');
+        //$tidy = tidy_parse_string($html, $settings, 'utf8');
+
+        return $html;
         
-        return  preg_replace('~(</.+>|<.+/>|-->)(?=\n *<\w+)~m', "\$1\n", $tidy);
+        return preg_replace('~(</.+>|<.+/>|-->)(?=\n *<\w+)~m', "\$1\n", $tidy);
     }
 }
