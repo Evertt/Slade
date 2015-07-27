@@ -17,7 +17,7 @@ class TagBlock
         'variableContent'   => '/^(==|=) *.+/',
         'nodeContent'       => '/^: *([\s\S]*?)(?=\n*$)/D',
         'yieldContent'      => '/^-\s*(\S*)/',
-        'textContent'       => '/^.+/'
+        'textContent'       => '/^\|.+/'
     ];
 
     protected static $selfClosingTags = [

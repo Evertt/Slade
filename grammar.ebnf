@@ -1,4 +1,54 @@
-template = {template block, {line break}};
+attribute name  = /[^\s\/>"\'=]+/;
+string          = /"[^"\n]+"|'[^'\n]+'/;
+variable        = /\$[a-z_]\w*/;
+any character except line break and outdent = -(line break | outdent);
+
+static text       = { any character except line break and outdent }
+variable text     = { static text | variable | ('{', expression, '}') };
+
+block of static text   = {static text},   [line break, indent, {static text, [line break]},   outdent];
+block of variable text = {variable text}, [line break, indent, {variable text, [line break]}, outdent];
+
+text block = '|', block of variable text;
+variable block = '=', ['='], (variable | expression), [text block];
+
+language name = 'css' | 'js';
+code block    = language name, ':', block of static text;
+
+tag identifier = [tag name], [tag id],    {tag class}
+               | [tag name], {tag class}, [tag id];
+
+name              = letter, {letter | digit | '-', '_'};
+tag name          = name;
+tag id            = '#', name;
+tag class         = '.', name;
+
+child blocks = line break, indent, {template block}, outdent;
+inline block = ':', template block;
+
+content block     = text block
+                  | variable block
+                  | yield block
+                  | inline block
+                  | child blocks;
+
+attribute value   = string | variable;
+attribute         = attribute name, ['=', [ '=' | '?' ], attribute value];
+
+tag block = tag identifier, {attribute}, [content block];
+
+html block = '<', block of variable text;
+
+yield block   = '-', name, [content block];
+section block = '@', name, [content block];
+
+include block = '+', name, {'.', name}, {attribute}, [content block];
+extend block  = '_', name, {'.', name}, {attribute}, [content block];
+
+comment block = '/', ['!'], block of variable text;
+
+iteration block = '>', (variable | expression), ['>', [ variable ]], content block;
+conditional block = ('?' | '!'), expression, child blocks;
 
 template block = code block
                | tag block
@@ -13,34 +63,4 @@ template block = code block
                | iteration block
                | conditional block;
 
-code block              = language name, ':', [line of code], [line break, indent, {line of code}];
-language name           = 'css' | 'javascript';
-line of code            = { any character }, line break;
-
-tag block = tag identifier, {attribute}, [tag content], [line break, indent, {template block}];
-
-tag identifier = [tag name], [tag id],    {tag class}
-               | [tag name], {tag class}, [tag id];
-
-name              = letter, {letter | digit | '-', '_'};
-tag name          = name;
-tag id            = '#', name;
-tag class         = '.', name;
-tag content       = variable content | text content;
-variable content  = '=', ['='], variable;
-text content      = !'=', {text incl vars};
-text incl vars    = {{any character}, {variable | ('{', expression, '}')}};
-attribute         = attribute name, '=', attribute value;
-attribute value   = string | boolean | variable;
-boolean           = 'false' | 'true';
-
-
-text block = '|', {text incl vars}, [line break, indent, {text incl vars}];
-
-
-# the regular expressions are here, because I don't know how to write this in real good enbf:
-
-attribute name  = /[^\s\/>"\'=]+/;
-string          = /"[^"\n]"|'[^'\n]'/;
-variable        = /[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/;
-any character   = /./;
+template = {template block, {line break}};
