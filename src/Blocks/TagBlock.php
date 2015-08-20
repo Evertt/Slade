@@ -78,11 +78,6 @@ class TagBlock
             return " $name";
         }
 
-        if (starts_with($value, ['"', "'"]))
-        {
-            return " $name=$value";
-        }
-
         if (starts_with($value, '='))
         {
             $value = substr($value, 1);
